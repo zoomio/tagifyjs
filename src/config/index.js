@@ -4,19 +4,19 @@ const getEnv = () => {
 
 const config = {
     development: {
-        api: 'http://localhost:8080',
+        api: 'http://localhost:8080/api/tagify',
         appID: '<APP_ID>',
     },
     production: {
-        api: 'https://zoomio.org',
+        api: 'https://zoomio.org/api/tagify',
         appID: '<APP_ID>',
     }
 };
 
-export const getURL = () => {
+export const api = () => {
     return config[getEnv()].api;
 }
 
-export const getAppID = () => {
+export const appID = () => {
     return config[getEnv()].tagifyAppID;
 }

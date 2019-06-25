@@ -1,10 +1,11 @@
 {
   "name": "tagify-js",
-  "version": "1.0.0",
-  "description": "JS client for Tagify service.",
+  "version": "0.1.0",
+  "description": "JS component for Tagify.",
   "module": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   "homepage": "https://github.com/smeshkov/tagify-js#readme",
   "devDependencies": {
     "lodash": "^4.17.11",
-    "webpack": "^4.34.0"
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.5"
   }
 }

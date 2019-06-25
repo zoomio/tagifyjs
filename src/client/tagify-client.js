@@ -1,5 +1,5 @@
 import RestClient from './rest-client';
-import { getURL, getAppID } from '../config/index'
+import { api, appID } from '../config/index'
 
 class TagifyClient extends RestClient {
     constructor({ appID = '', serviceUrl = '', onUnauthorised = _.noop } = {}) {
@@ -40,6 +40,6 @@ class TagifyClient extends RestClient {
  * @type {RestClient}
  */
 export default new TagifyClient({
-    appID: getAppID(),
-    serviceUrl: getURL(),
+    appID: appID(),
+    serviceUrl: api(),
 });
