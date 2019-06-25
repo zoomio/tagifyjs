@@ -1,2 +1,2 @@
 # tagify-js
-JS client for Tagify service.
+JS component for Tagify.
