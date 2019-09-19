@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Zoom IO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="file:////Users/smeshkov/src/tagify-js/dist/tagify.js"></script>
+</head>
+
+<body>
+
+    <div id="content">
+        <p>Some text is in here.</p>
+    </div>
+
+    <div id="tags">
+    </div>
+
+    <script>
+        const tagify = new Tagify({
+            target: document.getElementById('tags'),
+            source: 'https://medium.com/@emmanuelmark/how-to-create-a-javascript-library-30df146b3d2a'
+        });
+    </script>
+
+</body>
+
+</html>

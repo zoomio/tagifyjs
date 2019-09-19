@@ -2,6 +2,10 @@
  * Renders a list of tags inside given target DOM element.
  */
 const render = ({ target, tags = [] }) => {
+
+    console.log('target: ' + target);
+    console.log('tags: ' + tags);
+
     if (!target || tags.length == 0) {
         return;
     }
