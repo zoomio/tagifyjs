@@ -33,9 +33,9 @@ class RestClient {
   protected onUnauthorised: () => void;
 
   constructor(params: RestClientParams = {}) {
-    this.baseUrl = params.baseUrl || api();
+    this.baseUrl = params.baseUrl || api() || '';
     this.defaultFetchOptions = params.defaultFetchOptions || {};
-    this.onUnauthorised = params.onUnauthorised;
+    this.onUnauthorised = params.onUnauthorised || function () {};
   }
 
   // D: DELETE data type

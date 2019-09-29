@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import RestClient from './RestClient';
-import { api, appID } from '../config/index'
+import { api, appID } from '../config'
 
 export interface TagItem {
     id?: string;
@@ -19,6 +19,12 @@ export interface TagItemsResponse {
     }
 }
 
+export interface FetchTagsRequest {
+    source: string;
+    limit: number;
+    query: string;
+}
+
 class TagifyClient extends RestClient {
     protected appID: string;
 
@@ -27,8 +33,9 @@ class TagifyClient extends RestClient {
         this.appID = appID;
     }
 
-    fetchTags({ source, limit, query }): Promise<TagItemsResponse> {
-        const path = `/api/tagify?source=${source}&limit=${limit}&query=${query}`;
+    fetchTags(request: FetchTagsRequest): Promise<TagItemsResponse> {
+        const { source, limit, query } = request;
+        const path = `/api/tagify?source=${encodeURIComponent(source)}&limit=${limit}&query=${query}`;
         return this.getResource(path, { credentials: 'omit' });
     }
 

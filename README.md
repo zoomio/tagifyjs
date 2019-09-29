@@ -1,2 +1,2 @@
 # tagify-js
-JS component for Tagify.
+JS component library for Tagify.

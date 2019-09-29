@@ -1,6 +1,9 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+const { NODE_ENV = 'development' } = process.env;
+const isDevelopment = NODE_ENV === 'development';
+
 module.exports = {
     entry: './src/index.ts',
     output: {
@@ -28,15 +31,6 @@ module.exports = {
                     }
                 }
             },
-            // {
-            //     test: /\.html$/,
-            //     use: [
-            //         {
-            //             loader: "html-loader",
-            //             options: { minimize: true }
-            //         }
-            //     ]
-            // },
             {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
@@ -47,14 +41,15 @@ module.exports = {
         extensions: ['*', '.js', '.jsx', '.tsx', '.ts'],
     },
     plugins: [
-        // new HtmlWebPackPlugin({
-        //     template: "./src/index.html",
-        //     filename: "./index.html"
-        // }),
         new MiniCssExtractPlugin({
             filename: "[name].css",
             chunkFilename: "[id].css"
         }),
+        // These globals must also be defined in typings-custom/globals.d.ts
+        new webpack.DefinePlugin({
+            __DEV__: isDevelopment,
+            __PROD__: !isDevelopment,
+        })
     ],
     externals: {
         lodash: {
