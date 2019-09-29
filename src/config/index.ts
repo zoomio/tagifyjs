@@ -24,6 +24,10 @@ const environmentOverrides: EnvironmentOverrides = {
     }
 };
 
+export const isDev = (): boolean => {
+    return getEnv() === 'development';
+}
+
 export const api = (): string | undefined => {
     const cfg = environmentOverrides[getEnv()];
     if (!cfg) {

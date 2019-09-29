@@ -1,4 +1,5 @@
 import { TagItem } from '../../client/TagifyClient'
+import { isDev } from '../../config';
 
 export interface RenderRequest {
     target: HTMLScriptElement;
@@ -12,8 +13,11 @@ const render = (request: RenderRequest) => {
 
     const { target, tags } = request;
 
-    console.log('target: ' + target);
-    console.log('tags: ' + tags);
+    if (isDev()) {
+        console.log('[DOM render] request target type: ' + target.type);
+        console.log('[DOM render] request target id: ' + target.id);
+        console.log('[DOM render] request tags: ' + JSON.stringify(tags));
+    }
 
     if (!target || tags.length == 0) {
         return;
@@ -23,7 +27,8 @@ const render = (request: RenderRequest) => {
 
     tags.forEach((tag, i) => {
         let a: HTMLAnchorElement = document.createElement("a");
-        a.href = tag.value || '';
+        a.href = tag.source || '';
+        a.innerText = tag.value || '';
         let li = document.createElement("li");
         li.appendChild(a);
         ul.appendChild(li);
