@@ -1,6 +1,9 @@
 import { TagItem } from '../../client/TagifyClient'
 import { isDev } from '../../config';
 
+/**
+ * Request for rendering tags.
+ */
 export interface RenderRequest {
     target: HTMLScriptElement;
     tags: TagItem[];
@@ -21,6 +24,10 @@ const render = (request: RenderRequest) => {
 
     if (!target || tags.length == 0) {
         return;
+    }
+
+    if (isDev()) {
+        console.log('[DOM render] rendering tags...');
     }
 
     const ul = document.createElement("ul");

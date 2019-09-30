@@ -1,50 +1,31 @@
 const path = require('path');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require('webpack');
 
 const { NODE_ENV = 'development' } = process.env;
 const isDevelopment = NODE_ENV === 'development';
 
 module.exports = {
     entry: './src/index.ts',
+    devtool: 'inline-source-map',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'tagify.js',
-        library: 'tagify-js'
+        filename: 'tagify.js'
+        // library: 'tagify-js'
     },
     module: {
         rules: [
             {
-                test: /\.(js|jsx|tsx|ts)$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            '@babel/preset-env',
-                            '@babel/preset-typescript'
-                        ],
-                        plugins: [
-                            '@babel/plugin-transform-runtime',
-                            '@babel/proposal-class-properties',
-                            '@babel/plugin-proposal-object-rest-spread'
-                        ]
-                    }
-                }
-            },
-            {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"]
+                // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
             }
         ]
     },
     resolve: {
-        extensions: ['*', '.js', '.jsx', '.tsx', '.ts'],
+        extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: "[name].css",
-            chunkFilename: "[id].css"
-        }),
         // These globals must also be defined in typings-custom/globals.d.ts
         new webpack.DefinePlugin({
             __DEV__: isDevelopment,
