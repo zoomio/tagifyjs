@@ -1,5 +1,5 @@
 {
-  "name": "tagifyjs",
+  "name": "@smeshkov/tagifyjs",
   "version": "0.1.0",
   "description": "JS component for Tagify.",
   "module": "src/index.js",
@@ -8,19 +8,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
-    "deploy": "gsutil -m rsync -R -a public-read dist gs://www.zoomio.org/tagify-js"
+    "deploy": "gsutil -m rsync -R -a public-read dist gs://www.zoomio.org/tagifyjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smeshkov/tagify-js.git"
+    "url": "git+https://github.com/smeshkov/tagifyjs.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/smeshkov/tagify-js/issues"
+    "url": "https://github.com/smeshkov/tagifyjs/issues"
   },
-  "homepage": "https://github.com/smeshkov/tagify-js#readme",
+  "homepage": "https://github.com/smeshkov/tagifyjs#readme",
   "devDependencies": {
     "html-webpack-plugin": "^3.2.0",
     "ts-loader": "^6.2.0",

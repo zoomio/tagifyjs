@@ -1,4 +1,4 @@
-# tagify-js
+# TagifyJS
 JS component library for Tagify.
 
 ## Publishing
@@ -8,4 +8,4 @@ JS component library for Tagify.
 
 ## Demo
 
-Use [tagify-js-demo](https://github.com/smeshkov/tagify-js-demo) to see TagifyJS in action.
+Use [tagifyjs-demo](https://github.com/smeshkov/tagifyjs-demo) to see TagifyJS in action.

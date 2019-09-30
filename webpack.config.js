@@ -9,8 +9,8 @@ module.exports = {
     devtool: 'inline-source-map',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'tagify.js'
-        // library: 'tagify-js'
+        filename: 'tagify.js',
+        library: 'tagifyjs'
     },
     module: {
         rules: [
