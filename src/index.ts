@@ -1,1 +1,1 @@
-export { renderTags } from './tagify';
+export { tagify } from './tagify';

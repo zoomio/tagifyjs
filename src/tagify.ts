@@ -18,7 +18,7 @@ const fetchTags = async (source: string, limit: number, query: string) => {
     return data && data.tags ? data.tags : [];
 }
 
-export const renderTags = (params: TagifyParams) => {
+export const tagify = (params: TagifyParams) => {
 
     const { target, source, query = '', limit = LIMIT, render = domRender } = params;
 
