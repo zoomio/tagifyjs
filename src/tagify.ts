@@ -1,4 +1,4 @@
-import tagifyClient, { TagItem } from './client/TagifyClient';
+import tagifyClient from './client/TagifyClient';
 import { isDev } from './config';
 import { Render } from './render';
 import domRender from './render/dom';
