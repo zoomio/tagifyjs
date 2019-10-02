@@ -1,55 +1,35 @@
 import tagifyClient, { TagItem } from './client/TagifyClient';
 import { isDev } from './config';
-import domRender, { RenderRequest } from './render/dom';
+import { Render } from './render';
+import domRender from './render/dom';
 
 const LIMIT = 5;
+
+export interface TagifyParams {
+    target: HTMLScriptElement;
+    render?: Render;
+    source: string;
+    query?: string;
+    limit?: number;
+}
 
 const fetchTags = async (source: string, limit: number, query: string) => {
     const { data } = await tagifyClient.fetchTags({ source, limit, query });
     return data && data.tags ? data.tags : [];
 }
 
-export interface TagifyParams {
-    target: HTMLScriptElement;
-    source: string;
-    query?: string;
-    limit?: number;
-    render?: (request: RenderRequest) => void;
-}
+export const renderTags = (params: TagifyParams) => {
 
-export class Tagify {
-    private target: HTMLScriptElement;
-    private source: string;
-    private query: string;
-    private limit: number;
-    private render: (request: RenderRequest) => void;
-    private tags: TagItem[] = [];
+    const { target, source, query = '', limit = LIMIT, render = domRender } = params;
 
-    constructor(params: TagifyParams) {
-        this.target = params.target;
-        this.source = params.source;
-        this.query = params.query || '';
-        this.limit = params.limit || LIMIT;
-        this.render = params.render || domRender;
-        this.renderTags();
-    }
+    fetchTags(source, limit, query)
+        .then(tags => {
+            if (isDev()) {
+                console.log(`[Tagify] fetched ${tags.length} tags`);
+            }
 
-    async renderTags() {
-        const { target, source, query, limit, render } = this;
-
-        if (this.tags.length == 0) {
-            this.tags = await fetchTags(source, limit, query);
-        }
-
-        const { tags } = this;
-
-        if (isDev()) {
-            console.log(`[Tagify] fetched ${tags.length} tags`);
-        }
-
-        if (tags.length > 0) {
-            render({ target, tags });
-        }
-    }
-
+            if (tags.length > 0) {
+                render({ target, tags });
+            }
+        });
 }

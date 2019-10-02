@@ -31,13 +31,13 @@ module.exports = {
             __DEV__: isDevelopment,
             __PROD__: !isDevelopment,
         })
-    ],
-    externals: {
-        lodash: {
-            commonjs: 'lodash',
-            commonjs2: 'lodash',
-            amd: 'lodash',
-            root: '_'
-        }
-    }
+    ]//,
+    // externals: {
+    //     lodash: {
+    //         commonjs: 'lodash',
+    //         commonjs2: 'lodash',
+    //         amd: 'lodash',
+    //         root: '_'
+    //     }
+    // }
 };

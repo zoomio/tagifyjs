@@ -1,18 +1,10 @@
-import { TagItem } from '../../client/TagifyClient'
+import { Render, RenderRequest } from '../.';
 import { isDev } from '../../config';
-
-/**
- * Request for rendering tags.
- */
-export interface RenderRequest {
-    target: HTMLScriptElement;
-    tags: TagItem[];
-}
 
 /**
  * Renders a list of tags inside given target DOM element.
  */
-const render = (request: RenderRequest) => {
+const render: Render = (request: RenderRequest) => {
 
     const { target, tags } = request;
 
@@ -31,12 +23,15 @@ const render = (request: RenderRequest) => {
     }
 
     const ul = document.createElement("ul");
+    ul.className = 'tagifyList';
 
     tags.forEach((tag, i) => {
         let a: HTMLAnchorElement = document.createElement("a");
-        a.href = tag.source || '';
-        a.innerText = tag.value || '';
+        a.href = tag.source || '/';
+        a.innerText = tag.value || `tag ${i}`;
+        a.className = 'tagifyLink';
         let li = document.createElement("li");
+        li.className = 'tagifyRow';
         li.appendChild(a);
         ul.appendChild(li);
     });
