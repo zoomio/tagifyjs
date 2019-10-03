@@ -1,5 +1,5 @@
 # TagifyJS
-JS component library for Tagify.
+JS component library for [Tagify](https://github.com/zoomio/tagifyjs).
 
 ## Publishing
 
