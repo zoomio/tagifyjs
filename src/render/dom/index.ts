@@ -26,13 +26,19 @@ const render: Render = (request: RenderRequest) => {
     ul.className = 'tagifyList';
 
     tags.forEach((tag, i) => {
+        if (!tag.source || tag.source === '') {
+            return;
+        }
+
         let a: HTMLAnchorElement = document.createElement("a");
-        a.href = tag.source || '/';
+        a.href = tag.source;
         a.innerText = tag.value || `tag ${i}`;
         a.className = 'tagifyLink';
+        
         let li = document.createElement("li");
         li.className = 'tagifyRow';
         li.appendChild(a);
+        
         ul.appendChild(li);
     });
 

@@ -6,6 +6,7 @@ import domRender from './render/dom';
 const LIMIT = 5;
 
 export interface TagifyParams {
+    appID: string;
     target: HTMLScriptElement;
     render?: Render;
     source: string;
@@ -13,16 +14,16 @@ export interface TagifyParams {
     limit?: number;
 }
 
-const fetchTags = async (source: string, limit: number, query: string) => {
-    const { data } = await tagifyClient.fetchTags({ source, limit, query });
+const fetchTags = async (appID: string, source: string, limit: number, query: string) => {
+    const { data } = await tagifyClient.fetchTags({ appID, source, limit, query });
     return data && data.tags ? data.tags : [];
 }
 
 export const tagify = (params: TagifyParams) => {
 
-    const { target, source, query = '', limit = LIMIT, render = domRender } = params;
+    const { appID, target, source, query = '', limit = LIMIT, render = domRender } = params;
 
-    fetchTags(source, limit, query)
+    fetchTags(appID, source, limit, query)
         .then(tags => {
             if (isDev()) {
                 console.log(`[Tagify] fetched ${tags.length} tags`);

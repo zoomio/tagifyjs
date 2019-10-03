@@ -20,22 +20,22 @@ export interface TagItemsResponse {
 }
 
 export interface FetchTagsRequest {
+    appID: string;
     source: string;
     limit: number;
     query: string;
 }
 
 class TagifyClient extends RestClient {
-    protected appID: string;
 
-    constructor({ appID = '', baseUrl = '', onUnauthorised = _.noop } = {}) {
+    constructor({ baseUrl = '', onUnauthorised = _.noop } = {}) {
         super({ baseUrl, onUnauthorised });
-        this.appID = appID;
     }
 
     fetchTags(request: FetchTagsRequest): Promise<TagItemsResponse> {
-        const { source, limit, query } = request;
-        const path = `/api/tagify?source=${encodeURIComponent(source)}&limit=${limit}&query=${query}`;
+        const { appID, source, limit, query } = request;
+        const path = `/api/tagify?appID=${appID}&source=${encodeURIComponent(source)}`
+            + `&limit=${limit}&query=${query}`;
         return this.getResource(path, { credentials: 'omit' });
     }
 
@@ -47,6 +47,5 @@ class TagifyClient extends RestClient {
  * @type {RestClient}
  */
 export default new TagifyClient({
-    appID: appID(),
     baseUrl: api(),
 });
