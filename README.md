@@ -1,10 +1,10 @@
 # TagifyJS
-JS component library for [Tagify](https://github.com/zoomio/tagifyjs).
+JS component library for [Tagify](https://github.com/zoomio/tagify).
 
 ## Publishing
 
 - Run `tsc`
-- Run `npm publish`.
+- Run `npm publish --access public`.
 
 ## Demo
 
