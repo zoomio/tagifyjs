@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import RestClient from './RestClient';
-import { api, appID } from '../config'
+import { api } from '../config'
 
 export interface TagItem {
     id?: string;
@@ -26,17 +26,35 @@ export interface FetchTagsRequest {
     query: string;
 }
 
+export interface TagifyResponseItem {
+    source: string;
+    tags: TagItem[];
+}
+
+export interface TagifyBatchResponse {
+    data: {
+        pages: TagifyResponseItem[];
+    }
+}
+
+export interface TagifyRequestItem {
+    source: string;
+    title: string;
+    limit?: number;
+}
+
 class TagifyClient extends RestClient {
 
     constructor({ baseUrl = '', onUnauthorised = _.noop } = {}) {
         super({ baseUrl, onUnauthorised });
     }
 
-    fetchTags(request: FetchTagsRequest): Promise<TagItemsResponse> {
-        const { appID, source, limit, query } = request;
-        const path = `/api/tagify?appID=${appID}&source=${encodeURIComponent(source)}`
-            + `&limit=${limit}&query=${query}`;
-        return this.getResource(path, { credentials: 'omit' });
+    fetchPagesTags(request: { appID: string, host: string, limit: number, pages: TagifyRequestItem[] }): Promise<TagifyBatchResponse> {
+        const { appID, host, limit, pages = [] } = request;
+        const path = `/batch/${appID}`;
+        // helps to bypass cross origin limits
+        const extraFetchOptions = { credentials: 'omit', 'Content-Type': 'text/plain' };
+        return this.postResource(path, { host, limit, pages }, extraFetchOptions);
     }
 
 }

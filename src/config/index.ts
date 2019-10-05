@@ -2,7 +2,6 @@ type Env = 'development' | 'production';
 
 const config = {
     api: 'http://localhost:8080/api/tagify',
-    appID: '<APP_ID>',
 };
 
 type Config = typeof config;
@@ -16,11 +15,9 @@ const getEnv = (): Env => {
 const environmentOverrides: EnvironmentOverrides = {
     development: {
         api: 'http://localhost:8080/api/tagify',
-        appID: '<APP_ID>',
     },
     production: {
         api: 'https://zoomio.org/api/tagify',
-        appID: '<APP_ID>',
     }
 };
 
@@ -34,12 +31,4 @@ export const api = (): string | undefined => {
         return undefined;
     }
     return cfg.api;
-}
-
-export const appID = (): string | undefined => {
-    const cfg = environmentOverrides[getEnv()];
-    if (!cfg) {
-        return undefined;
-    }
-    return cfg.appID;
 }

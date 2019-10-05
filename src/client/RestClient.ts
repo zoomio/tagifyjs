@@ -21,6 +21,17 @@ const defaultFetchOptions = {
   mode: 'cors',
 };
 
+// Ideally we should check the content-type header if it is application/json but this would make
+// most tests fail currently since fetch-mock doesn't set any headers.
+function parseResponse<T>(response: Response): Promise<T> {
+  const statusCode = response.status;
+  if (statusCode === 204 || statusCode === 202) {
+    return new Promise<T>(() => {});
+  }
+
+  return response.json();
+}
+
 export interface RestClientParams {
   baseUrl?: string;
   defaultFetchOptions?: object;
@@ -34,7 +45,7 @@ class RestClient {
 
   constructor(params: RestClientParams = {}) {
     this.baseUrl = params.baseUrl || api() || '';
-    this.defaultFetchOptions = params.defaultFetchOptions || {};
+    this.defaultFetchOptions = params.defaultFetchOptions || defaultFetchOptions;
     this.onUnauthorised = params.onUnauthorised || function () {};
   }
 
@@ -58,13 +69,22 @@ class RestClient {
 
   // T: return type
   // D: post data type
-  async postResource<T, D>(path: string, data: D): Promise<T> {
-    return await this.fetchJson<T>(path, 'POST', {
+  async postResource<T, D>(path: string, data: D, additionalFetchOptions?: object): Promise<T> {
+    let fetchOptions = {
       body: JSON.stringify(data),
       headers: {
         'content-type': 'application/json',
-      },
-    });
+      }
+    };
+
+    if (additionalFetchOptions) {
+      fetchOptions = {
+        ...fetchOptions,
+        ...additionalFetchOptions,
+      }
+    }
+
+    return await this.fetchJson<T>(path, 'POST', fetchOptions);
   }
 
   // D: post data type
@@ -119,10 +139,11 @@ class RestClient {
   // T: response return type
   private async fetchJson<T>(path: string, method: string, additionalFetchOptions: object = {}): Promise<T> {
     const response = await this.fetchResource(path, method, additionalFetchOptions);
-    const text = await response.text();
+    return parseResponse(response);
+    // const text = await response.text();
 
     // trying to parse empty response as JSON throws an error, but endpoints can return empty response in case of success
-    return text ? JSON.parse(text) : {};
+    // return text ? JSON.parse(text) : {};
   }
 }
 
