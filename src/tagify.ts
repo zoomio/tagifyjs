@@ -46,7 +46,6 @@ export const tagify = (params: TagifyParams): void => {
         return;
     }
 
-    
     const targetMap: TargetMap = {};
     targets.forEach(t => {
         targetMap[t.source] = t;

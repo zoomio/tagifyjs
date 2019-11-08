@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { NODE_ENV = 'development' } = process.env;
 const isDevelopment = NODE_ENV === 'development';
@@ -30,7 +31,11 @@ module.exports = {
         new webpack.DefinePlugin({
             __DEV__: isDevelopment,
             __PROD__: !isDevelopment,
-        })
+        }),
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        }),
     ]//,
     // externals: {
     //     lodash: {
