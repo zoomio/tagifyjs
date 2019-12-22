@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { api } from '../config/index'
 
 class HttpError {

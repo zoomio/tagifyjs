@@ -10,7 +10,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'tagify.js',
-        library: 'tagifyjs'
+        library: 'tagifyjs',
+        libraryTarget: 'umd'
     },
     module: {
         rules: [
@@ -31,13 +32,5 @@ module.exports = {
             __DEV__: isDevelopment,
             __PROD__: !isDevelopment,
         })
-    ]//,
-    // externals: {
-    //     lodash: {
-    //         commonjs: 'lodash',
-    //         commonjs2: 'lodash',
-    //         amd: 'lodash',
-    //         root: '_'
-    //     }
-    // }
+    ]
 };

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import noop from 'lodash/noop';
 
 import RestClient from './RestClient';
 import { api } from '../config'
@@ -21,9 +21,9 @@ export interface TagItemsResponse {
 
 export interface FetchTagsRequest {
     appID: string;
-    source: string;
+    host: string;
     limit: number;
-    query: string;
+    pages: TagifyRequestItem[];
 }
 
 export interface TagifyResponseItem {
@@ -45,11 +45,11 @@ export interface TagifyRequestItem {
 
 class TagifyClient extends RestClient {
 
-    constructor({ baseUrl = '', onUnauthorised = _.noop } = {}) {
+    constructor({ baseUrl = '', onUnauthorised = noop } = {}) {
         super({ baseUrl, onUnauthorised });
     }
 
-    fetchPagesTags(request: { appID: string, host: string, limit: number, pages: TagifyRequestItem[] }): Promise<TagifyBatchResponse> {
+    fetchPagesTags(request: FetchTagsRequest): Promise<TagifyBatchResponse> {
         const { appID, host, limit, pages = [] } = request;
         const path = `/batch/${appID}`;
         // helps to bypass cross origin limits
