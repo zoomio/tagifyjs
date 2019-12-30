@@ -1,5 +1,5 @@
 import { isDev } from '../../config';
-import { domRender } from './render';
+import { renderTags } from './render-tags';
 import tagifyClient, { TagifyRequestItem, TagifyBatchResponse } from '../../client/TagifyClient';
 
 const LIMIT = 5;
@@ -70,7 +70,7 @@ const tagify = (params: TagifyParams): void => {
                 const element = targetMap[source];
 
                 if (tags.length > 0) {
-                    domRender({ target: element, tags });
+                    renderTags({ target: element, tags });
                 }
             });
         });

@@ -1,7 +1,8 @@
 import { isDev } from '../../config';
 import { TagItem } from '../../client/TagifyClient'
+import renderPageListByTag from './render-page-list-by-tag';
 
-const DEBUG_PREFIX_DOM_RENDER = '[domRender]';
+const DEBUG_PREFIX_RENDER_TAGS = '[rendertags]';
 
 /**
  * Request for rendering tags.
@@ -16,12 +17,12 @@ export type Render = (request: RenderRequest) => void;
 /**
  * Renders a list of tags inside given target DOM element.
  */
-export const domRender: Render = (request: RenderRequest) => {
+export const renderTags: Render = (request: RenderRequest) => {
 
     const { target, tags } = request;
 
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX_DOM_RENDER} tags: ${JSON.stringify(tags)}`);
+        console.log(`${DEBUG_PREFIX_RENDER_TAGS} tags: ${JSON.stringify(tags)}`);
     }
 
     if (!target || tags.length == 0) {
@@ -29,7 +30,7 @@ export const domRender: Render = (request: RenderRequest) => {
     }
 
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX_DOM_RENDER} rendering tags...`);
+        console.log(`${DEBUG_PREFIX_RENDER_TAGS} rendering tags...`);
     }
 
     const ul = document.createElement("ul");
@@ -40,14 +41,17 @@ export const domRender: Render = (request: RenderRequest) => {
             return;
         }
 
-        let a: HTMLAnchorElement = document.createElement("a");
-        a.href = tag.source;
-        a.innerText = tag.value || `tag ${i}`;
-        a.className = 'tagifyLink';
-
-        let li = document.createElement("li");
+        const anchor: HTMLAnchorElement = document.createElement("a");
+        anchor.href = '#';
+        anchor.innerText = tag.value || `tag ${i}`;
+        anchor.className = 'tagifyLink';
+        anchor.addEventListener('click', (ev: MouseEvent) => {
+            ev.preventDefault();
+            renderPageListByTag(target, tag.value || '');
+        });
+        const li = document.createElement("li");
         li.className = 'tagifyRow';
-        li.appendChild(a);
+        li.appendChild(anchor);
 
         ul.appendChild(li);
     });
