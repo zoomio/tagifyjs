@@ -13,14 +13,19 @@ export interface TagItem {
     timestamp?: string;
 }
 
+interface Page {
+    source: string;
+    tags: TagItem[];
+}
+
 export interface TagItemsResponse {
     data: {
-        tags: TagItem[];
+        pages: Page[];
     }
 }
 
 export interface FetchTagsRequest {
-    appID: string;
+    appId: string;
     host: string;
     limit: number;
     pages: TagifyRequestItem[];
@@ -50,8 +55,8 @@ class TagifyClient extends RestClient {
     }
 
     fetchPagesTags(request: FetchTagsRequest): Promise<TagifyBatchResponse> {
-        const { appID, host, limit, pages = [] } = request;
-        const path = `/batch/${appID}`;
+        const { appId, host, limit, pages = [] } = request;
+        const path = `/batch/${appId}`;
         // helps to bypass cross origin limits
         const extraFetchOptions = { credentials: 'omit', 'Content-Type': 'text/plain' };
         return this.postResource(path, { host, limit, pages }, extraFetchOptions);

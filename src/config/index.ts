@@ -1,3 +1,7 @@
+export const DEFAULT_TAG_LIMIT = 5;
+export const DEFAULT_PAGE_LIMIT = 10;
+export const DEFAULT_REQUEST_BATCH_LIMIT = 5;
+
 type Env = 'development' | 'production';
 
 const config = {

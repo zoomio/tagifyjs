@@ -1,5 +1,6 @@
 import { isDev } from '../../config';
 import { TagItem } from '../../client/TagifyClient'
+import { api } from '../../config'
 
 const DEBUG_PREFIX_DOM_RENDER = '[domRender]';
 
@@ -9,6 +10,8 @@ const DEBUG_PREFIX_DOM_RENDER = '[domRender]';
 export interface RenderRequest {
     target: Element;
     tags: TagItem[];
+    pagesUrl: string;
+    pageLimit: number;
 }
 
 export type Render = (request: RenderRequest) => void;
@@ -18,7 +21,7 @@ export type Render = (request: RenderRequest) => void;
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { target, tags } = request;
+    const { target, tags, pagesUrl, pageLimit } = request;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX_DOM_RENDER} tags: ${JSON.stringify(tags)}`);
@@ -36,13 +39,13 @@ export const domRender: Render = (request: RenderRequest) => {
     ul.className = 'tagifyList';
 
     tags.forEach((tag, i) => {
-        if (!tag.source || tag.source === '') {
+        if (!tag.source || tag.source === '' || !tag.value || tag.value === '') {
             return;
         }
 
         let a: HTMLAnchorElement = document.createElement("a");
-        a.href = tag.source;
-        a.innerText = tag.value || `tag ${i}`;
+        a.href = `${api()}/value?value=${tag.value}&limit=${pageLimit}&redirect=${pagesUrl}`;
+        a.innerText = `#${tag.value}`;
         a.className = 'tagifyLink';
 
         let li = document.createElement("li");
