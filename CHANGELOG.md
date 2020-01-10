@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.4.0
+ - first working MVP with, generates tags for given `<a>` HTML tags and shows relevant pages when clicked;
+ - changed `#getTagsForAnchors` to `#tagsForAnchors`;
+ - added `#relevant` to be called to show relevant pages for tag.
+
 ## 0.3.0
  - exposed default `#tagify` method as `#getTags`;
  - added `#getTagsForAnchors` as a quality of life improvement ofr ease of use;
