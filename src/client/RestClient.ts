@@ -101,7 +101,7 @@ class RestClient {
   }
 
   // D: PUT data type
-  async putResource<D>(path: string, data?: D): Promise<void> {
+  async putResource<D>(path: string, data?: D, additionalFetchOptions: object = {}): Promise<void> {
     let fetchOptions;
     if (data) {
       fetchOptions = {
@@ -109,6 +109,7 @@ class RestClient {
         headers: {
           'content-type': 'application/json',
         },
+        ...additionalFetchOptions,
       };
     }
     await this.fetchResource(path, 'PUT', fetchOptions);

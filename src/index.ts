@@ -1,6 +1,6 @@
 import tagify from './component';
-import { getTagsForAnchors } from './anchors';
-import { getRelevant } from './relevant';
+import { getTagsForAnchors } from './tags';
+import { getRelevant } from './pages';
 
 export const tagsForAnchors = getTagsForAnchors;
 export const relevant = getRelevant;

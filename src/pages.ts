@@ -1,15 +1,12 @@
 import { isDev } from './config';
+import { TagifyPage } from './types';
+import { renderPages } from './component/pages'
 
 const DEBUG_PREFIX = '[getRelevant]';
 
 export interface RelevantRequest {
     appId: string;
     targetId: string;
-}
-
-interface TagifyPage {
-    title: string;
-    source: string;
 }
 
 interface TagifyPages {
@@ -64,29 +61,5 @@ export const getRelevant = (req: RelevantRequest) => {
 
     const { data: { pages } } = data;
 
-    if (pages.length == 0) {
-        console.log(`${DEBUG_PREFIX} no pages found for ${tagifyValue}`);
-        return;
-    }
-
-    const target = (<HTMLElement><any>document.getElementById(targetId));
-
-    const ul = document.createElement("ul");
-    ul.className = 'tagifyRelevantList';
-
-    pages.forEach(p => {
-
-        let a: HTMLAnchorElement = document.createElement("a");
-        a.href = p.source;
-        a.innerText = p.title;
-        a.className = 'tagifyRelevantLink';
-
-        let li = document.createElement("li");
-        li.className = 'tagifyRelevantRow';
-        li.appendChild(a);
-
-        ul.appendChild(li);
-    });
-
-    target.appendChild(ul);
+    renderPages(pages, tagifyValue, targetId);
 }
