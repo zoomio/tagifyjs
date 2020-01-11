@@ -39,7 +39,7 @@ export const domRender: Render = (request: RenderRequest) => {
     ul.className = 'tagifyList';
 
     tags.forEach((tag, i) => {
-        if (!tag.source || tag.source === '' || !tag.value || tag.value === '') {
+        if (!tag.value || tag.value === '') {
             return;
         }
 
