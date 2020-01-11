@@ -9,6 +9,8 @@ const DEBUG_PREFIX = '[domRender]';
  */
 export interface RenderRequest {
     target: Element;
+    source: string;
+    title: string;
     tags: TagItem[];
     host: string;
     pagesUrl: string;
@@ -36,7 +38,7 @@ const deleteTag = (req: TagReq): void => {
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { host, target, tags, pagesUrl, pageLimit } = request;
+    const { host, source, title, target, tags, pagesUrl, pageLimit } = request;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
@@ -53,6 +55,8 @@ export const domRender: Render = (request: RenderRequest) => {
     const ul = document.createElement("ul");
     ul.className = 'tagifyList';
 
+    let lastScore: number;
+
     tags.forEach((tag, i) => {
         if (tag.value === '') {
             if (isDev()) {
@@ -60,6 +64,8 @@ export const domRender: Render = (request: RenderRequest) => {
             }
             return;
         }
+
+        lastScore = tag.score || 0;
 
         let a: HTMLAnchorElement = document.createElement("a");
         a.href = `${api()}/value?value=${tag.value}&limit=${pageLimit}&redirect=${pagesUrl}`;
@@ -83,9 +89,15 @@ export const domRender: Render = (request: RenderRequest) => {
     // "add extra tag"
     let inp: HTMLInputElement = document.createElement("input");
     inp.className = 'tagifyAddInp';
-    inp.onblur = () => {};
-    inp.onmouseenter = () => {};
-    
+    inp.onblur = (e: Event) => {
+        let input = <HTMLInputElement>e.target;
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} adding new tag value ${input.value}`);
+        }
+        addTag({ host, value: input.value, source, pageTitle: title, score: lastScore - 0.01 });
+    };
+    // inp.onmouseenter = () => { };
+
     let btn: HTMLButtonElement = document.createElement("button");
     btn.className = 'tagifyAddBtn';
     btn.onclick = () => {

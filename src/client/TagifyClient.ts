@@ -30,6 +30,7 @@ export interface FetchTagsRequest {
 
 export interface TagifyResponseItem {
     source: string;
+    title: string;
     tags: TagItem[];
 }
 
