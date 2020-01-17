@@ -5,9 +5,7 @@ import { api } from '../config'
 
 export interface TagItem {
     value: string;
-    source: string;
     score?: number;
-    pageTitle?: string;
 }
 
 interface Page {
@@ -74,7 +72,7 @@ class TagifyClient extends RestClient {
     }
 
     deleteTag(req: TagReq): void {
-        void this.putResource('', req);
+        void this.deleteResource('', req);
     }
 
 }
