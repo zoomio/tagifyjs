@@ -66,6 +66,13 @@ const createTag = (host: string, value: string, source: string, pagesUrl: string
     delBtn.setAttribute("style", DEL_BTN_STYLE);
     delBtn.onclick = () => {
         deleteTag({ host, value, source });
+        // remove self
+        let parent: HTMLLIElement = <HTMLLIElement>a.parentElement;
+        delBtn.remove();
+        a.remove();
+        if (parent) {
+            parent.remove();
+        }
     };
 
     return {
