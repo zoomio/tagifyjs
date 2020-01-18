@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.6.0
+ - implemented inline tag editing feature for admins;
+ - few refactors here and there.
+
 ## 0.5.0
  - bug fixes;
 

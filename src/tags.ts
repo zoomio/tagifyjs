@@ -12,6 +12,7 @@ export interface TagsForAnchorsRequest {
     tagLimit?: number;
     pageLimit?: number;
     batchLimit?: number;
+    isAdmin?: boolean;
 }
 
 export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
@@ -23,12 +24,14 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
         targetsClassName,
         tagLimit = DEFAULT_TAG_LIMIT,
         pageLimit = DEFAULT_PAGE_LIMIT,
-        batchLimit = DEFAULT_REQUEST_BATCH_LIMIT } = req;
+        batchLimit = DEFAULT_REQUEST_BATCH_LIMIT,
+        isAdmin,
+    } = req;
 
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX} appId: ${appId}, anchorsClassName: ${anchorsClassName}, ` + 
-        `targetsClassName: ${targetsClassName}, pagesUrl: ${pagesUrl}, tagLimit: ${tagLimit}, ` + 
-        `pageLimit: ${pageLimit}, batch: ${batchLimit}`);
+        console.log(`${DEBUG_PREFIX} appId: ${appId}, anchorsClassName: ${anchorsClassName}, ` +
+            `targetsClassName: ${targetsClassName}, pagesUrl: ${pagesUrl}, tagLimit: ${tagLimit}, ` +
+            `pageLimit: ${pageLimit}, batch: ${batchLimit}`);
     }
 
     const sources = (<HTMLAnchorElement[]><any>document.getElementsByClassName(anchorsClassName));
@@ -105,6 +108,7 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
                 pagesUrl,
                 tagLimit,
                 pageLimit,
+                isAdmin,
             });
             reqTargets = [];
         }

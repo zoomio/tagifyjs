@@ -25,6 +25,7 @@ export interface RenderRequest {
     host: string;
     pagesUrl: string;
     pageLimit: number;
+    isAdmin?: boolean;
 }
 
 export type Render = (request: RenderRequest) => void;
@@ -34,10 +35,14 @@ export type Render = (request: RenderRequest) => void;
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { host, source, title, target, tags, pagesUrl, pageLimit } = request;
+    const { host, source, title, target, tags, pagesUrl, pageLimit, isAdmin } = request;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
+    }
+
+    if (!isAdmin && isDev()) {
+        console.log(`${DEBUG_PREFIX} not allowed to edit tags`);
     }
 
     if (!target || tags.length == 0) {
@@ -78,11 +83,20 @@ export const domRender: Render = (request: RenderRequest) => {
         lastScore = score || 0;
 
         const { anchor, button } = createTag(host, value, source, pagesUrl, pageLimit);
-        appendToUl(ulTags, [anchor, button], TAG_ROW_CLASS);
+        if (isAdmin) {
+            appendToUl(ulTags, [anchor, button], TAG_ROW_CLASS);
+        } else {
+            appendToUl(ulTags, [anchor], TAG_ROW_CLASS);
+        }
     });
 
-
     appendToUl(ul, [ulTags], PARENT_ROW_CLASS);
+
+    target.appendChild(ul);
+
+    if (!isAdmin) {
+        return;
+    }
 
     const addInp = createTagInput({
         host,
@@ -104,7 +118,5 @@ export const domRender: Render = (request: RenderRequest) => {
     };
 
     appendToUl(ul, [addInp, addBtn], PARENT_ROW_CLASS);
-
-    target.appendChild(ul);
 
 };

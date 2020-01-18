@@ -11,6 +11,7 @@ export interface TagifyParams {
     pagesUrl: string;
     tagLimit?: number;
     pageLimit?: number;
+    isAdmin?: boolean;
 }
 
 export interface TagifyTarget {
@@ -24,7 +25,15 @@ type TargetMap = { [source in string]: Element };
 
 const tagify = (params: TagifyParams): void => {
 
-    const { appId, host, targets, pagesUrl, tagLimit = DEFAULT_TAG_LIMIT, pageLimit = DEFAULT_PAGE_LIMIT } = params;
+    const { 
+        appId, 
+        host, 
+        targets, 
+        pagesUrl, 
+        tagLimit = DEFAULT_TAG_LIMIT, 
+        pageLimit = DEFAULT_PAGE_LIMIT,
+        isAdmin,
+     } = params;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} recieved ${targets.length} targets: ${JSON.stringify(targets)}`);
@@ -70,7 +79,7 @@ const tagify = (params: TagifyParams): void => {
                 const element = targetMap[source];
 
                 if (tags.length > 0) {
-                    domRender({ target: element, source, title, host, tags, pagesUrl, pageLimit });
+                    domRender({ target: element, source, title, host, tags, pagesUrl, pageLimit, isAdmin });
                 }
             });
         });
