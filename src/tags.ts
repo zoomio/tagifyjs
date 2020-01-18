@@ -1,5 +1,5 @@
 import tagify from './component';
-import { TagifyTarget } from './component/dom';
+import { TagifyTarget } from './component/tags';
 import { DEFAULT_PAGE_LIMIT, DEFAULT_TAG_LIMIT, DEFAULT_REQUEST_BATCH_LIMIT, isDev } from './config'
 
 const DEBUG_PREFIX = '[getTagsForAnchors]';
@@ -97,7 +97,7 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
             title: innerText,
         });
 
-        if (reqTargets.length === batchLimit || reqTargets.length === sources.length) {
+        if (reqTargets.length === batchLimit || i === sources.length - 1) {
             tagify({
                 appId,
                 host,

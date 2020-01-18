@@ -4,13 +4,8 @@ import RestClient from './RestClient';
 import { api } from '../config'
 
 export interface TagItem {
-    id?: string;
-    value?: string;
-    source?: string;
-    pageTitle?: string;
+    value: string;
     score?: number;
-    count?: number;
-    timestamp?: string;
 }
 
 interface Page {
@@ -33,6 +28,7 @@ export interface FetchTagsRequest {
 
 export interface TagifyResponseItem {
     source: string;
+    title: string;
     tags: TagItem[];
 }
 
@@ -48,6 +44,17 @@ export interface TagifyRequestItem {
     limit?: number;
 }
 
+export interface TagReq {
+    host: string;
+    value: string;
+    source: string;
+    pageTitle?: string;
+    score?: number;
+}
+
+// helps to bypass cross origin limits
+const EXTRA_FETCH_OPTIONS = { credentials: 'omit', 'Content-Type': 'text/plain' };
+
 class TagifyClient extends RestClient {
 
     constructor({ baseUrl = '', onUnauthorised = noop } = {}) {
@@ -57,9 +64,15 @@ class TagifyClient extends RestClient {
     fetchPagesTags(request: FetchTagsRequest): Promise<TagifyBatchResponse> {
         const { appId, host, limit, pages = [] } = request;
         const path = `/batch/${appId}`;
-        // helps to bypass cross origin limits
-        const extraFetchOptions = { credentials: 'omit', 'Content-Type': 'text/plain' };
-        return this.postResource(path, { host, limit, pages }, extraFetchOptions);
+        return this.postResource(path, { host, limit, pages }, EXTRA_FETCH_OPTIONS);
+    }
+
+    putTag(req: TagReq): void {
+        void this.putResource('', req);
+    }
+
+    deleteTag(req: TagReq): void {
+        void this.deleteResource('', req);
     }
 
 }

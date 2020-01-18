@@ -2,7 +2,7 @@ import { DEFAULT_TAG_LIMIT, DEFAULT_PAGE_LIMIT, isDev } from '../../config';
 import { domRender } from './render';
 import tagifyClient, { TagifyRequestItem, TagifyBatchResponse } from '../../client/TagifyClient';
 
-const DEBUG_PREFIX_TAGIFY = '[tagify]';
+const DEBUG_PREFIX = '[tagify]';
 
 export interface TagifyParams {
     appId: string;
@@ -27,13 +27,12 @@ const tagify = (params: TagifyParams): void => {
     const { appId, host, targets, pagesUrl, tagLimit = DEFAULT_TAG_LIMIT, pageLimit = DEFAULT_PAGE_LIMIT } = params;
 
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX_TAGIFY} recieved ${targets.length} targets: ${JSON.stringify(targets)}`);
+        console.log(`${DEBUG_PREFIX} recieved ${targets.length} targets: ${JSON.stringify(targets)}`);
     }
 
     if (targets.length === 0) {
         return;
     }
-
 
     const targetMap: TargetMap = {};
     const reqs: TagifyRequestItem[] = [];
@@ -54,7 +53,7 @@ const tagify = (params: TagifyParams): void => {
             const { data: { pages } } = resp;
 
             if (isDev()) {
-                console.log(`${DEBUG_PREFIX_TAGIFY} fetched ${!pages ? 0 : pages.length} pages`);
+                console.log(`${DEBUG_PREFIX} fetched ${!pages ? 0 : pages.length} pages`);
             }
 
             if (!pages || pages.length === 0) {
@@ -62,7 +61,7 @@ const tagify = (params: TagifyParams): void => {
             }
 
             pages.forEach(p => {
-                const { tags, source } = p;
+                const { tags, source, title } = p;
 
                 if (!tags || tags.length === 0) {
                     return;
@@ -71,7 +70,7 @@ const tagify = (params: TagifyParams): void => {
                 const element = targetMap[source];
 
                 if (tags.length > 0) {
-                    domRender({ target: element, tags, pagesUrl, pageLimit });
+                    domRender({ target: element, source, title, host, tags, pagesUrl, pageLimit });
                 }
             });
         });

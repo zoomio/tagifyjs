@@ -1,3 +1,5 @@
-import getTags from "./dom";
+import tagify from "./tags";
+import { renderPages } from "./pages";
 
-export default getTags;
+export const relevantPages = renderPages;
+export default tagify;

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.0
+ - bug fixes;
+
 ## 0.4.0
  - first working MVP with, generates tags for given `<a>` HTML tags and shows relevant pages when clicked;
  - changed `#getTagsForAnchors` to `#tagsForAnchors`;
