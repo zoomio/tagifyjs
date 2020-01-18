@@ -68,11 +68,13 @@ class TagifyClient extends RestClient {
     }
 
     putTag(req: TagReq): void {
-        void this.putResource('', req);
+        this.putResource('', req)
+            .catch(reason => console.error(reason));
     }
 
     deleteTag(req: TagReq): void {
-        void this.deleteResource('', req);
+        this.deleteResource('', req)
+            .catch(reason => console.error(reason));
     }
 
 }

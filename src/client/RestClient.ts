@@ -49,7 +49,7 @@ class RestClient {
   }
 
   // D: DELETE data type
-  async deleteResource<D>(path: string, data?: D): Promise<void> {
+  async deleteResource<D>(path: string, data?: D): Promise<Response> {
     let fetchOptions;
     if (data) {
       fetchOptions = {
@@ -59,7 +59,7 @@ class RestClient {
         },
       };
     }
-    await this.fetchResource(path, 'DELETE', fetchOptions);
+    return await this.fetchResource(path, 'DELETE', fetchOptions);
   }
 
   async getResource<T>(path: string, additionalFetchOptions: object = {}): Promise<T> {
@@ -101,7 +101,7 @@ class RestClient {
   }
 
   // D: PUT data type
-  async putResource<D>(path: string, data?: D, additionalFetchOptions: object = {}): Promise<void> {
+  async putResource<D>(path: string, data?: D, additionalFetchOptions: object = {}): Promise<Response> {
     let fetchOptions;
     if (data) {
       fetchOptions = {
@@ -112,7 +112,7 @@ class RestClient {
         ...additionalFetchOptions,
       };
     }
-    await this.fetchResource(path, 'PUT', fetchOptions);
+    return await this.fetchResource(path, 'PUT', fetchOptions);
   }
 
   protected async fetchResource(path: string, method: string, additionalFetchOptions: object = {}): Promise<Response> {
