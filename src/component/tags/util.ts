@@ -20,7 +20,7 @@ export interface TagResp {
     button: HTMLButtonElement;
 }
 
-export interface CreateInputReq {
+export interface CustomTagReq {
     host: string;
     source: string;
     pageTitle: string;
@@ -30,7 +30,8 @@ export interface CreateInputReq {
     tagList: HTMLUListElement;
 }
 
-export const createTag = (host: string, value: string, source: string, pagesUrl: string, pageLimit: number): TagResp => {
+export const createTag = (req: CustomTagReq, value: string): TagResp => {
+    const { host, source, pagesUrl, pageLimit, pageTitle, lastScore } = req;
     let a: HTMLAnchorElement = document.createElement("a");
     a.href = `${api()}/value?value=${value}&limit=${pageLimit}&redirect=${pagesUrl}`;
     a.innerText = `#${value}`;
@@ -48,7 +49,7 @@ export const createTag = (host: string, value: string, source: string, pagesUrl:
             }
             return;
         }
-        deleteTag({ host, value, source });
+        deleteTag({ host, value, source, pageTitle, score: lastScore });
         // remove self
         let parent: HTMLLIElement = <HTMLLIElement>a.parentElement;
         delBtn.remove();
@@ -84,7 +85,7 @@ export const appendToUl = (ul: HTMLUListElement, children: HTMLElement[], liClas
     ul.appendChild(li);
 }
 
-export const createTagInput = (req: CreateInputReq): HTMLInputElement => {
+export const createTagInput = (req: CustomTagReq): HTMLInputElement => {
     const addInp: HTMLInputElement = document.createElement("input");
     addInp.className = 'tagifyAddInp';
     addInp.setAttribute("style", ADD_INPUT_STYLE_HIDDEN);
@@ -103,7 +104,7 @@ export const createTagInput = (req: CreateInputReq): HTMLInputElement => {
     return addInp;
 }
 
-const appendTag = (req: CreateInputReq, input: HTMLInputElement): void => {
+const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
     const { host, source, pagesUrl, pageLimit, pageTitle, lastScore, tagList } = req;
     const { value } = input;
 
@@ -120,7 +121,7 @@ const appendTag = (req: CreateInputReq, input: HTMLInputElement): void => {
     }
 
     addTag({ host, value: value, source, pageTitle, score: lastScore - 0.0001 });
-    const { anchor, button } = createTag(host, value, source, pagesUrl, pageLimit);
+    const { anchor, button } = createTag(req, value);
     appendToUl(tagList, [anchor, button], TAG_ROW_CLASS);
     input.value = '';
 }

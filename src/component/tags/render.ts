@@ -82,7 +82,15 @@ export const domRender: Render = (request: RenderRequest) => {
 
         lastScore = score || 0;
 
-        const { anchor, button } = createTag(host, value, source, pagesUrl, pageLimit);
+        const { anchor, button } = createTag({
+            host, 
+            source, 
+            pageTitle: title, 
+            pagesUrl, 
+            pageLimit, 
+            lastScore, 
+            tagList: ulTags,
+        }, value);
         if (isAdmin) {
             appendToUl(ulTags, [anchor, button], TAG_ROW_CLASS);
         } else {

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.7.0
+ - send more data when remove tag.
+
 ## 0.6.0
  - implemented inline tag editing feature for admins;
  - few refactors here and there.
