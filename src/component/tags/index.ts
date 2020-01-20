@@ -1,6 +1,11 @@
 import { DEFAULT_TAG_LIMIT, DEFAULT_PAGE_LIMIT, isDev } from '../../config';
 import { domRender } from './render';
-import tagifyClient, { TagifyRequestItem, TagifyBatchResponse } from '../../client/TagifyClient';
+import tagifyClient, {
+    FetchTagsRequestImpl,
+    TagifyRequestItem,
+    TagifyRequestItemImpl,
+    TagifyBatchResponse,
+} from '../../client/TagifyClient';
 
 const DEBUG_PREFIX = '[tagify]';
 
@@ -25,15 +30,15 @@ type TargetMap = { [source in string]: Element };
 
 const tagify = (params: TagifyParams): void => {
 
-    const { 
-        appId, 
-        host, 
-        targets, 
-        pagesUrl, 
-        tagLimit = DEFAULT_TAG_LIMIT, 
+    const {
+        appId,
+        host,
+        targets,
+        pagesUrl,
+        tagLimit = DEFAULT_TAG_LIMIT,
         pageLimit = DEFAULT_PAGE_LIMIT,
         isAdmin,
-     } = params;
+    } = params;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} recieved ${targets.length} targets: ${JSON.stringify(targets)}`);
@@ -48,16 +53,32 @@ const tagify = (params: TagifyParams): void => {
 
     targets.forEach(t => {
         targetMap[t.source] = t.element;
-        reqs.push({
-            source: t.source,
-            title: t.title,
-            limit: tagLimit,
-        })
+        reqs.push(new TagifyRequestItemImpl(t.source, t.title, tagLimit))
     });
 
-    // fetchPagesTags(appId, host, limit, targets)
-    tagifyClient.fetchPagesTags({ appId, host, limit: tagLimit, pages: reqs })
-        .then((resp: TagifyBatchResponse) => {
+    const request = new FetchTagsRequestImpl(appId, host, tagLimit, reqs);
+    const storageKey = request.hash();
+    const rawResponse = localStorage.getItem(storageKey);
+
+    let cacheMiss = true;
+    let response: Promise<TagifyBatchResponse>;
+    if (rawResponse) {
+        cacheMiss = false;
+        response = Promise.resolve(JSON.parse(rawResponse));
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} found result in cache [${storageKey}]`);
+        }
+    } else {
+        response = tagifyClient.fetchPagesTags(request);
+    }
+
+    response.then((resp: TagifyBatchResponse) => {
+            if (cacheMiss) {
+                if (isDev()) {
+                    console.log(`${DEBUG_PREFIX} caching result [${storageKey}]`);
+                }
+                localStorage.setItem(storageKey, JSON.stringify(resp));
+            }
 
             const { data: { pages } } = resp;
 

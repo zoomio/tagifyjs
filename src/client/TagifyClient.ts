@@ -24,6 +24,28 @@ export interface FetchTagsRequest {
     host: string;
     limit: number;
     pages: TagifyRequestItem[];
+    hash(): string;
+}
+
+export class FetchTagsRequestImpl implements FetchTagsRequest {
+    public appId: string;
+    public host: string;
+    public limit: number;
+    public pages: TagifyRequestItem[];
+
+    constructor(appId: string, host: string, limit: number, pages: TagifyRequestItem[]) {
+        this.appId = appId;
+        this.host = host;
+        this.limit = limit;
+        this.pages = pages;
+    }
+
+    hash(): string {
+        const rawString = [];
+        rawString.push(`${this.appId}|${this.host}|${this.limit}`);
+        this.pages.forEach(p => rawString.push(p.hash()));
+        return btoa(rawString.join(''));
+    }
 }
 
 export interface TagifyResponseItem {
@@ -42,6 +64,23 @@ export interface TagifyRequestItem {
     source: string;
     title: string;
     limit?: number;
+    hash(): string;
+}
+
+export class TagifyRequestItemImpl implements TagifyRequestItem {
+    public source: string;
+    public title: string;
+    public limit?: number;
+
+    constructor(source: string, title: string, limit?: number) {
+        this.source = source;
+        this.title = title;
+        this.limit = limit;
+    }
+
+    hash(): string {
+        return btoa(`${this.source}|${this.title}|${this.limit}`);
+    }
 }
 
 export interface TagReq {

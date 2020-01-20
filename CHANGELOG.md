@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.8.0
+ - introduced cache, to save on expensive HTTP calls.
+
 ## 0.7.0
  - send more data when remove tag.
 
