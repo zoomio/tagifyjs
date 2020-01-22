@@ -1,5 +1,6 @@
 import { DEFAULT_TAG_LIMIT, DEFAULT_PAGE_LIMIT, isDev } from '../../config';
 import { domRender } from './render';
+import tagCache from './cache';
 import tagifyClient, {
     TagifyBatchResponse,
     TagifyRequestItem,
@@ -30,6 +31,7 @@ const renderResponseItems = (
     targetMap: Map<string, Element>,
     host: string,
     pagesUrl: string,
+    tagLimit: number,
     pageLimit: number,
     isAdmin?: boolean): void => {
     items.forEach(p => {
@@ -42,7 +44,7 @@ const renderResponseItems = (
         const element = targetMap.get(source);
 
         if (element && tags.length > 0) {
-            domRender({ target: element, source, title, host, tags, pagesUrl, pageLimit, isAdmin });
+            domRender({ target: element, source, title, host, tags, pagesUrl, tagLimit, pageLimit, isAdmin });
         }
     });
 }
@@ -71,21 +73,26 @@ const tagify = (params: TagifyParams): void => {
     const reqs: TagifyRequestItem[] = [];
     const result: TagifyResponseItem[] = [];
 
+    let cachedLimit = tagCache.getLimit();
+    const invalidateCache = !cachedLimit || cachedLimit < tagLimit;
+
     targets.forEach(t => {
         targetMap.set(t.source, t.element);
-        const cachedPage = localStorage.getItem(btoa(t.source));
-        if (cachedPage) {
-            result.push(JSON.parse(cachedPage));
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}"`);
-            }
-        } else {
+        if (invalidateCache) {
             reqs.push({ source: t.source, title: t.title, limit: tagLimit });
+        } else {
+            const cachedPage = tagCache.getPage(t.source);
+            if (cachedPage) {
+                result.push(cachedPage);
+                if (isDev()) {
+                    console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}"`);
+                }
+            }
         }
     });
 
     if (reqs.length === 0) {
-        renderResponseItems(result, targetMap, host, pagesUrl, pageLimit, isAdmin);
+        renderResponseItems(result, targetMap, host, pagesUrl, tagLimit, pageLimit, isAdmin);
         return;
     }
 
@@ -113,10 +120,13 @@ const tagify = (params: TagifyParams): void => {
                 result.push(p);
 
                 // cache found page
-                localStorage.setItem(btoa(source), JSON.stringify(p));
+                tagCache.setPage(source, p);
             });
 
-            renderResponseItems(result, targetMap, host, pagesUrl, pageLimit, isAdmin);
+            renderResponseItems(result, targetMap, host, pagesUrl, tagLimit, pageLimit, isAdmin);
+
+            // Update limit cache
+            tagCache.setLimit(tagLimit);
         });
 }
 

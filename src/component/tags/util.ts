@@ -1,6 +1,7 @@
 import { isDev } from '../../config';
 import tagifyClient, { TagReq } from '../../client/TagifyClient'
 import { api } from '../../config'
+import tagCache from './cache';
 import {
     ADD_INPUT_STYLE_HIDDEN,
     DEL_BTN_STYLE,
@@ -128,7 +129,7 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
 
 const addTag = (req: TagReq): void => {
     tagifyClient.putTag(req);
-    localStorage.removeItem(btoa(req.source))
+    tagCache.removePage(req.source);
 }
 
 const deleteTag = (req: TagReq): void => {
@@ -136,5 +137,5 @@ const deleteTag = (req: TagReq): void => {
         console.log(`${DEBUG_PREFIX} removing tag: ${JSON.stringify(req)}`);
     }
     tagifyClient.deleteTag(req);
-    localStorage.removeItem(btoa(req.source))
+    tagCache.removePage(req.source);
 }

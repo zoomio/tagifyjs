@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.10.0
+ - cache considers request tag limit as invalidation mechanism.
+
 ## 0.9.0
  - more granular cache, plus cache invalidation on tag editting.
 
