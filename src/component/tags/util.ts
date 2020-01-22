@@ -128,6 +128,7 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
 
 const addTag = (req: TagReq): void => {
     tagifyClient.putTag(req);
+    localStorage.removeItem(btoa(req.source))
 }
 
 const deleteTag = (req: TagReq): void => {
@@ -135,4 +136,5 @@ const deleteTag = (req: TagReq): void => {
         console.log(`${DEBUG_PREFIX} removing tag: ${JSON.stringify(req)}`);
     }
     tagifyClient.deleteTag(req);
+    localStorage.removeItem(btoa(req.source))
 }

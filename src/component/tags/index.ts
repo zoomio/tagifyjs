@@ -1,10 +1,9 @@
 import { DEFAULT_TAG_LIMIT, DEFAULT_PAGE_LIMIT, isDev } from '../../config';
 import { domRender } from './render';
 import tagifyClient, {
-    FetchTagsRequestImpl,
-    TagifyRequestItem,
-    TagifyRequestItemImpl,
     TagifyBatchResponse,
+    TagifyRequestItem,
+    TagifyResponseItem,
 } from '../../client/TagifyClient';
 
 const DEBUG_PREFIX = '[tagify]';
@@ -26,7 +25,27 @@ export interface TagifyTarget {
     query?: string;
 }
 
-type TargetMap = { [source in string]: Element };
+const renderResponseItems = (
+    items: TagifyResponseItem[],
+    targetMap: Map<string, Element>,
+    host: string,
+    pagesUrl: string,
+    pageLimit: number,
+    isAdmin?: boolean): void => {
+    items.forEach(p => {
+        const { tags, source, title } = p;
+
+        if (!tags || tags.length === 0) {
+            return;
+        }
+
+        const element = targetMap.get(source);
+
+        if (element && tags.length > 0) {
+            domRender({ target: element, source, title, host, tags, pagesUrl, pageLimit, isAdmin });
+        }
+    });
+}
 
 const tagify = (params: TagifyParams): void => {
 
@@ -48,38 +67,31 @@ const tagify = (params: TagifyParams): void => {
         return;
     }
 
-    const targetMap: TargetMap = {};
+    const targetMap: Map<string, Element> = new Map();
     const reqs: TagifyRequestItem[] = [];
+    const result: TagifyResponseItem[] = [];
 
     targets.forEach(t => {
-        targetMap[t.source] = t.element;
-        reqs.push(new TagifyRequestItemImpl(t.source, t.title, tagLimit))
+        targetMap.set(t.source, t.element);
+        const cachedPage = localStorage.getItem(btoa(t.source));
+        if (cachedPage) {
+            result.push(JSON.parse(cachedPage));
+            if (isDev()) {
+                console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}"`);
+            }
+        } else {
+            reqs.push({ source: t.source, title: t.title, limit: tagLimit });
+        }
     });
 
-    const request = new FetchTagsRequestImpl(appId, host, tagLimit, reqs);
-    const storageKey = request.hash();
-    const rawResponse = localStorage.getItem(storageKey);
-
-    let cacheMiss = true;
-    let response: Promise<TagifyBatchResponse>;
-    if (rawResponse) {
-        cacheMiss = false;
-        response = Promise.resolve(JSON.parse(rawResponse));
-        if (isDev()) {
-            console.log(`${DEBUG_PREFIX} found result in cache [${storageKey}]`);
-        }
-    } else {
-        response = tagifyClient.fetchPagesTags(request);
+    if (reqs.length === 0) {
+        renderResponseItems(result, targetMap, host, pagesUrl, pageLimit, isAdmin);
+        return;
     }
 
-    response.then((resp: TagifyBatchResponse) => {
-            if (cacheMiss) {
-                if (isDev()) {
-                    console.log(`${DEBUG_PREFIX} caching result [${storageKey}]`);
-                }
-                localStorage.setItem(storageKey, JSON.stringify(resp));
-            }
 
+    tagifyClient.fetchPagesTags({ appId, host, limit: tagLimit, pages: reqs })
+        .then((resp: TagifyBatchResponse) => {
             const { data: { pages } } = resp;
 
             if (isDev()) {
@@ -91,20 +103,21 @@ const tagify = (params: TagifyParams): void => {
             }
 
             pages.forEach(p => {
-                const { tags, source, title } = p;
+                const { tags, source } = p;
 
                 if (!tags || tags.length === 0) {
                     return;
                 }
 
-                const element = targetMap[source];
+                // set result
+                result.push(p);
 
-                if (tags.length > 0) {
-                    domRender({ target: element, source, title, host, tags, pagesUrl, pageLimit, isAdmin });
-                }
+                // cache found page
+                localStorage.setItem(btoa(source), JSON.stringify(p));
             });
-        });
 
+            renderResponseItems(result, targetMap, host, pagesUrl, pageLimit, isAdmin);
+        });
 }
 
 export default tagify;

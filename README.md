@@ -4,7 +4,7 @@ JS component library for [Tagify](https://github.com/zoomio/tagify).
 ## Development
  - Raise a PR against master branch;
  - Get PR approved;
- - Tag latest commit with the release tag and push it;
+ - Tag latest commit with the release tag and push it (`TAG=x.y.z npm run tag`);
  - Merge PR.
 
 ## Publishing

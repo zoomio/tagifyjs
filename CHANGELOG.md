@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.9.0
+ - more granular cache, plus cache invalidation on tag editting.
+
 ## 0.8.0
  - introduced cache, to save on expensive HTTP calls.
 
