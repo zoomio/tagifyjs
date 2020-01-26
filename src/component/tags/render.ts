@@ -23,6 +23,7 @@ export interface RenderRequest {
     title: string;
     tags: TagItem[];
     host: string;
+    appId: string;
     pagesUrl: string;
     tagLimit: number;
     pageLimit: number;
@@ -36,7 +37,7 @@ export type Render = (request: RenderRequest) => void;
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { host, source, title, target, tags, pagesUrl, tagLimit, pageLimit, isAdmin } = request;
+    const { host, appId, source, title, target, tags, pagesUrl, tagLimit, pageLimit, isAdmin } = request;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
@@ -64,6 +65,8 @@ export const domRender: Render = (request: RenderRequest) => {
 
     let lastScore: number = 0;
 
+    const seenTags = new Map<string, boolean>()
+
     tags.slice(0, tagLimit).forEach((tag, i) => {
         const { value, score } = tag;
 
@@ -83,14 +86,20 @@ export const domRender: Render = (request: RenderRequest) => {
 
         lastScore = score || 0;
 
+        // keep track of seen tags,
+        // to avoid duplicates.
+        seenTags.set(value, true);
+
         const { anchor, button } = createTag({
-            host, 
-            source, 
-            pageTitle: title, 
-            pagesUrl, 
-            pageLimit, 
-            lastScore, 
+            host,
+            appId,
+            source,
+            pageTitle: title,
+            pagesUrl,
+            pageLimit,
+            lastScore,
             tagList: ulTags,
+            seenTags,
         }, value);
         if (isAdmin) {
             appendToUl(ulTags, [anchor, button], TAG_ROW_CLASS);
@@ -109,12 +118,14 @@ export const domRender: Render = (request: RenderRequest) => {
 
     const addInp = createTagInput({
         host,
+        appId,
         source,
         pageTitle: title,
         pagesUrl,
         pageLimit,
         lastScore,
         tagList: ulTags,
+        seenTags,
     });
 
     const addBtn: HTMLButtonElement = document.createElement("button");

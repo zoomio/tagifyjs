@@ -23,18 +23,20 @@ export interface TagResp {
 
 export interface CustomTagReq {
     host: string;
+    appId: string;
     source: string;
     pageTitle: string;
     pagesUrl: string;
     pageLimit: number;
     lastScore: number;
     tagList: HTMLUListElement;
+    seenTags: Map<string, boolean>;
 }
 
 export const createTag = (req: CustomTagReq, value: string): TagResp => {
-    const { host, source, pagesUrl, pageLimit, pageTitle, lastScore } = req;
+    const { host, appId, source, pagesUrl, pageLimit, pageTitle, lastScore } = req;
     let a: HTMLAnchorElement = document.createElement("a");
-    a.href = `${api()}/value?value=${value}&limit=${pageLimit}&redirect=${pagesUrl}`;
+    a.href = `${api()}/value/${appId}?value=${value}&limit=${pageLimit}&redirect=${pagesUrl}`;
     a.innerText = `#${value}`;
     a.className = TAG_LINK_CLASS;
     a.setAttribute('style', TAG_LINK_STYLE);
@@ -44,13 +46,31 @@ export const createTag = (req: CustomTagReq, value: string): TagResp => {
     delBtn.innerText = 'x';
     delBtn.setAttribute("style", DEL_BTN_STYLE);
     delBtn.onclick = () => {
-        if (!host || host === '' || !value || value === '' || !source || source === '') {
+        if (appId == '') {
             if (isDev()) {
-                console.log(`${DEBUG_PREFIX} can't delete empty tag`);
+                console.log(`${DEBUG_PREFIX} appId is required`);
             }
             return;
         }
-        deleteTag({ host, value, source, pageTitle, score: lastScore });
+        if (host === '') {
+            if (isDev()) {
+                console.log(`${DEBUG_PREFIX} host is required`);
+            }
+            return;
+        }
+        if (value === '') {
+            if (isDev()) {
+                console.log(`${DEBUG_PREFIX} value is required`);
+            }
+            return;
+        }
+        if (source === '') {
+            if (isDev()) {
+                console.log(`${DEBUG_PREFIX} source is required`);
+            }
+            return;
+        }
+        deleteTag({ appId, host, value, source, pageTitle, score: lastScore });
         // remove self
         let parent: HTMLLIElement = <HTMLLIElement>a.parentElement;
         delBtn.remove();
@@ -106,7 +126,7 @@ export const createTagInput = (req: CustomTagReq): HTMLInputElement => {
 }
 
 const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
-    const { host, source, pagesUrl, pageLimit, pageTitle, lastScore, tagList } = req;
+    const { appId, host, source, pageTitle, lastScore, tagList, seenTags } = req;
     const { value } = input;
 
     input.setAttribute("style", ADD_INPUT_STYLE_HIDDEN);
@@ -117,11 +137,17 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
         }
         return;
     }
+    if (seenTags.has(value)) {
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} duplicate value in the tag list: ${value}`);
+        }
+        return;
+    }
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} adding tag: ${JSON.stringify(req)}`);
     }
 
-    addTag({ host, value: value, source, pageTitle, score: lastScore - 0.0001 });
+    addTag({ appId, host, value: value, source, pageTitle, score: lastScore - 0.0001 });
     const { anchor, button } = createTag(req, value);
     appendToUl(tagList, [anchor, button], TAG_ROW_CLASS);
     input.value = '';

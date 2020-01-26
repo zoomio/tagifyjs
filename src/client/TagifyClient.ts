@@ -45,6 +45,7 @@ export interface TagifyRequestItem {
 }
 
 export interface TagReq {
+    appId: string;
     host: string;
     value: string;
     source: string;

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.11.0
+ - pass `appId` around to fetch right tags;
+ - fixed duplication in tag list issue, when editting manually.
+
 ## 0.10.0
  - cache considers request tag limit as invalidation mechanism.
 
