@@ -1,6 +1,7 @@
 import { TagifyResponseItem } from '../../client/TagifyClient';
 
-const LIMIT_KEY = btoa('limit');
+const LIMIT_KEY = btoa('tagify-limit');
+const API_VERSION_KEY = btoa('tagify-api-version');
 
 class TagCache {
 
@@ -34,6 +35,14 @@ class TagCache {
 
     removePage(key: string): void {
         localStorage.removeItem(btoa(key));
+    }
+
+    getApiVersion(): string | null {
+        return localStorage.getItem(API_VERSION_KEY);
+    }
+
+    setApiVersion(version: string): void {
+        localStorage.setItem(API_VERSION_KEY, version);
     }
 }
 

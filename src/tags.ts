@@ -1,8 +1,9 @@
 import tagify from './component';
 import { TagifyTarget } from './component/tags';
 import { DEFAULT_PAGE_LIMIT, DEFAULT_TAG_LIMIT, DEFAULT_REQUEST_BATCH_LIMIT, isDev } from './config'
+import { getHost } from './util';
 
-const DEBUG_PREFIX = '[getTagsForAnchors]';
+const LOG_PREFIX = '[getTagsForAnchors]';
 
 export interface TagsForAnchorsRequest {
     appId: string;
@@ -17,6 +18,10 @@ export interface TagsForAnchorsRequest {
 
 export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
 
+    if (isDev()) {
+        console.log(`${LOG_PREFIX} request: ${JSON.stringify(req)}`);
+    }
+
     const {
         appId,
         anchorsClassName,
@@ -28,18 +33,10 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
         isAdmin,
     } = req;
 
-    if (isDev()) {
-        console.log(`${DEBUG_PREFIX} appId: ${appId}, anchorsClassName: ${anchorsClassName}, ` +
-            `targetsClassName: ${targetsClassName}, pagesUrl: ${pagesUrl}, tagLimit: ${tagLimit}, ` +
-            `pageLimit: ${pageLimit}, batch: ${batchLimit}`);
-    }
-
     const sources = (<HTMLAnchorElement[]><any>document.getElementsByClassName(anchorsClassName));
 
     if (!sources || sources.length == 0) {
-        if (isDev()) {
-            console.log(`${DEBUG_PREFIX} no <a> tags found with CSS class name ${anchorsClassName}`);
-        }
+        console.error(`${LOG_PREFIX} no <a> tags found with CSS class name ${anchorsClassName}`);
         return;
     }
 
@@ -47,22 +44,18 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
     if (targetsClassName) {
         targets = (<HTMLElement[]><any>document.getElementsByClassName(targetsClassName));
         if (!targets || targets.length == 0) {
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} no target tags found with CSS class name ${targetsClassName}`);
-            }
+            console.error(`${LOG_PREFIX} no target tags found with CSS class name ${targetsClassName}`);
             return;
         }
         if (targets.length != sources.length) {
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} number of targets (${targets.length}) not equal to the number of <a> tags (${sources.length})`);
-            }
+            console.log(`${LOG_PREFIX} number of targets (${targets.length}) not equal to the number of <a> tags (${sources.length})`);
             return;
         }
     }
 
-    const host = `${location.protocol}//${location.hostname}` + (location.port && `:${location.port}`);
+    const host = getHost();
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX} setting host to ${host}`);
+        console.log(`${LOG_PREFIX} setting host to ${host}`);
     }
 
     let reqTargets: TagifyTarget[] = [];
@@ -72,25 +65,19 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
         const target: HTMLElement = targets[i];
 
         if (!source) {
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} article is undefined`);
-            }
+            console.log(`${LOG_PREFIX} article is undefined`);
             continue;
         }
 
         const href = source.href;
         if (!href) {
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} article element does not have "href" property`);
-            }
+            console.log(`${LOG_PREFIX} article element does not have "href" property`);
             continue;
         }
 
         const innerText = source.innerText;
         if (!innerText) {
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} article element does not have "innerText" property`);
-            }
+            console.log(`${LOG_PREFIX} article element does not have "innerText" property`);
             continue;
         }
 

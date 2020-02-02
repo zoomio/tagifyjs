@@ -53,6 +53,10 @@ export interface TagReq {
     score?: number;
 }
 
+export interface TagifySatus {
+    version: string;
+}
+
 // helps to bypass cross origin limits
 const EXTRA_FETCH_OPTIONS = { credentials: 'omit', 'Content-Type': 'text/plain' };
 
@@ -76,6 +80,10 @@ class TagifyClient extends RestClient {
     deleteTag(req: TagReq): void {
         this.deleteResource('', req)
             .catch(reason => console.error(reason));
+    }
+
+    status(): Promise<TagifySatus> {
+        return this.getResource('/status', EXTRA_FETCH_OPTIONS);
     }
 
 }

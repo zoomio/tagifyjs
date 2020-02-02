@@ -23,7 +23,6 @@ padding-left: 1em;
 export const TAG_LINK_CLASS = 'tagifyLink';
 export const TAG_LINK_STYLE = `
 color: #6c757d !important;
-font-size: 0.8em;
 `;
 
 export const DEL_BTN_STYLE = `

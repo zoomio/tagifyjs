@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.12.0
+ - provide method for rendering tags for the current page;
+ - better errors in console;
+ - do not enforse font-size for tags.
+
 ## 0.11.0
  - pass `appId` around to fetch right tags;
  - fixed duplication in tag list issue, when editting manually.
