@@ -25,7 +25,6 @@ export interface RenderRequest {
     host: string;
     appId: string;
     pagesUrl: string;
-    tagLimit: number;
     pageLimit: number;
     isAdmin?: boolean;
 }
@@ -37,7 +36,7 @@ export type Render = (request: RenderRequest) => void;
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { host, appId, source, title, target, tags, pagesUrl, tagLimit, pageLimit, isAdmin } = request;
+    const { host, appId, source, title, target, tags, pagesUrl, pageLimit, isAdmin } = request;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
@@ -67,7 +66,7 @@ export const domRender: Render = (request: RenderRequest) => {
 
     const seenTags = new Map<string, boolean>()
 
-    tags.slice(0, tagLimit).forEach((tag, i) => {
+    tags.forEach((tag, i) => {
         const { value, score } = tag;
 
         if (value === '') {

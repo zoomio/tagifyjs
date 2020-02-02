@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.13.0
+ - tag renderer should not be opinionated about number of tags to render.
+
 ## 0.12.0
  - provide method for rendering tags for the current page;
  - better errors in console;

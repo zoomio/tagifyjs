@@ -32,13 +32,12 @@ interface RenderItemsParams {
     host: string;
     appId: string;
     pagesUrl: string;
-    tagLimit: number;
     pageLimit: number;
     isAdmin?: boolean;
 }
 
 const renderResponseItems = (params: RenderItemsParams): void => {
-    const { items, targetMap, host, appId, pagesUrl, tagLimit, pageLimit, isAdmin } = params;
+    const { items, targetMap, host, appId, pagesUrl, pageLimit, isAdmin } = params;
     items.forEach(page => {
         const { tags, source, title } = page;
 
@@ -49,7 +48,7 @@ const renderResponseItems = (params: RenderItemsParams): void => {
         const element = targetMap.get(source);
 
         if (element && tags.length > 0) {
-            domRender({ target: element, source, title, host, appId, tags, pagesUrl, tagLimit, pageLimit, isAdmin });
+            domRender({ target: element, source, title, host, appId, tags, pagesUrl, pageLimit, isAdmin });
         }
     });
 }
@@ -96,7 +95,7 @@ const tagify = (params: TagifyParams): void => {
     });
 
     if (reqs.length === 0) {
-        renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, tagLimit, pageLimit, isAdmin });
+        renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
         return;
     }
 
@@ -127,7 +126,7 @@ const tagify = (params: TagifyParams): void => {
                 tagCache.setPage(source, p);
             });
 
-            renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, tagLimit, pageLimit, isAdmin });
+            renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
 
             // Update limit cache
             tagCache.setLimit(tagLimit);
