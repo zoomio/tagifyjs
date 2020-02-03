@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.14.0
+ - added TTL to the tags cache.
+
 ## 0.13.0
  - tag renderer should not be opinionated about number of tags to render.
 
