@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.16.0
+ - bumped cache TTL to 3 days.
+
 ## 0.15.0
  - fixed cache value parsing issues.
 

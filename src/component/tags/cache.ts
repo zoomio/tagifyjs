@@ -2,7 +2,7 @@ import { TagifyResponseItem } from '../../client/TagifyClient';
 
 const LIMIT_KEY: string = 'tagify-limit';
 const API_VERSION_KEY: string = 'tagify-api-version';
-const CACHE_TTL: number = 1000 * 60 * 60 * 2; // 2 hours
+const CACHE_TTL: number = 1000 * 60 * 60 * 72; // 3 days
 
 
 export type CachedValue = TagLimit | ApiVersion | TagifyResponseItem;
