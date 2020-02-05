@@ -1,5 +1,6 @@
 # TagifyJS
 JS component library for [Tagify](https://www.zoomio.org/tagify).
+More info about what is "Tagify" and the reasons behind it can be found [here](https://zoomio.org/blog/post/tags_as_a_service-5712840111423488).
 
 ## How to install "Tagify" on you web-site
 
@@ -32,8 +33,6 @@ Use API provided by the TagifyJS library to generate tags for selected pages:
       pagesUrl: 'https://my-awesome-web-site.com/blog/relevant',
       // number of tags to generate
       tagLimit: 3,
-      // number of pages in single request
-      batchLimit: 5,
       // enables admin mode for editing tags
       isAdmin: false
   });
