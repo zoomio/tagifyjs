@@ -1,6 +1,8 @@
 # TagifyJS
 JS component for [Tagify](https://www.zoomio.org/tagify).
+
 Checkout demo here [github.com/smeshkov/tagifyjs-demo](https://github.com/smeshkov/tagifyjs-demo)
+
 More info about what is "Tagify" and the reasons behind it can be found [here](https://zoomio.org/blog/post/tags_as_a_service-5712840111423488).
 
 ## How to install "Tagify" on you web-site

@@ -2,7 +2,7 @@ import { TagifyResponseItem } from '../../client/TagifyClient';
 
 const LIMIT_KEY: string = 'tagify-limit';
 const API_VERSION_KEY: string = 'tagify-api-version';
-const CACHE_TTL: number = 1000 * 60 * 60 * 72; // 3 days
+const DEFAULT_CACHE_TTL: number = 1000 * 60 * 60 * 168; // 7 days
 
 
 export type CachedValue = TagLimit | ApiVersion | TagifyResponseItem;
@@ -22,6 +22,8 @@ interface ApiVersion {
 
 class TagCache {
 
+    private cacheTtl?: number;
+
     private set(key: string, value: CachedValue): void {
         const cachedValue: CacheItem = { value };
         localStorage.setItem(btoa(key), JSON.stringify(cachedValue));
@@ -29,7 +31,8 @@ class TagCache {
 
     private setWithExpiry(key: string, value: CachedValue): void {
         const now = new Date().getTime();
-        const cachedValue: CacheItem = { expiry: now + CACHE_TTL, value };
+        const ttl = this.cacheTtl || DEFAULT_CACHE_TTL;
+        const cachedValue: CacheItem = { expiry: now + ttl, value };
         localStorage.setItem(btoa(key), JSON.stringify(cachedValue));
     }
 
@@ -59,6 +62,10 @@ class TagCache {
         }
 
         return value;
+    }
+
+    updateTtl(durationInMillis: number): void {
+        this.cacheTtl = durationInMillis;
     }
 
     remove(key: string): void {
