@@ -94,11 +94,13 @@ const tagify = (params: TagifyParams): void => {
         }
     });
 
-    if (reqs.length === 0) {
+    if (result.length > 0) {
         renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
-        return;
     }
 
+    if (reqs.length === 0) {        
+        return;
+    }
 
     tagifyClient.fetchPagesTags({ appId, host, limit: tagLimit, pages: reqs })
         .then((resp: TagifyBatchResponse) => {

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.18.0
+ - render cached results immediately without waiting for the rest of the results to be fetched via network.
+
 ## 0.17.0
  - bumped cache TTL to 7 days;
  - exposed method to allow changing it.
