@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.18.1
+ - fixed bug with the duplication of tags in case of the cached result and response from API both appended to the DOM.
+
 ## 0.18.0
  - render cached results immediately without waiting for the rest of the results to be fetched via network.
 

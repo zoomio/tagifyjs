@@ -75,7 +75,7 @@ const tagify = (params: TagifyParams): void => {
 
     const targetMap: Map<string, Element> = new Map();
     const reqs: TagifyRequestItem[] = [];
-    const result: TagifyResponseItem[] = [];
+    const cachedResult: TagifyResponseItem[] = [];
 
     let cachedLimit = tagCache.getLimit();
     const invalidateCache = !cachedLimit || cachedLimit < tagLimit;
@@ -85,7 +85,7 @@ const tagify = (params: TagifyParams): void => {
 
         const cachedPage = tagCache.getPage(t.source);
         if (!invalidateCache && cachedPage) {
-            result.push(cachedPage);
+            cachedResult.push(cachedPage);
             if (isDev()) {
                 console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}"`);
             }
@@ -94,13 +94,15 @@ const tagify = (params: TagifyParams): void => {
         }
     });
 
-    if (result.length > 0) {
-        renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
+    if (cachedResult.length > 0) {
+        renderResponseItems({ items: cachedResult, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
     }
 
     if (reqs.length === 0) {        
         return;
     }
+
+    const result: TagifyResponseItem[] = [];
 
     tagifyClient.fetchPagesTags({ appId, host, limit: tagLimit, pages: reqs })
         .then((resp: TagifyBatchResponse) => {
