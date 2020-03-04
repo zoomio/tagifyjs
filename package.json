@@ -12,8 +12,7 @@
     "build:dev": "NODE_ENV=development webpack --mode production",
     "build": "NODE_ENV=production webpack --mode production",
     "clean": "rm -r dist/*",
-    "deploy": "gsutil -m rsync -R -a public-read dist gs://www.zoomio.org/tagifyjs",
-    "upload": "gsutil cp -a public-read dist/tagify.js gs://www.zoomio.org/tagifyjs"
+    "deploy": "gsutil cp -a public-read dist/tagify.js gs://www.zoomio.org/tagifyjs"
   },
   "repository": {
     "type": "git",
