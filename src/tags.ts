@@ -1,6 +1,6 @@
 import tagify from './component';
-import { TagifyTarget } from './component/tags';
-import { DEFAULT_PAGE_LIMIT, DEFAULT_TAG_LIMIT, DEFAULT_REQUEST_BATCH_LIMIT, isDev } from './config'
+import { TagifyTarget } from './component/sources';
+import { DEFAULT_RELEVANT_LIMIT, DEFAULT_TAG_LIMIT, DEFAULT_REQUEST_BATCH_LIMIT, isDev } from './config'
 import { getHost } from './util';
 
 const LOG_PREFIX = '[getTagsForAnchors]';
@@ -8,10 +8,10 @@ const LOG_PREFIX = '[getTagsForAnchors]';
 export interface TagsForAnchorsRequest {
     appId: string;
     anchorsClassName: string;
-    pagesUrl: string;
     targetsClassName?: string;
     tagLimit?: number;
-    pageLimit?: number;
+    relevantUrl: string;
+    relevantLimit?: number;
     batchLimit?: number;
     isAdmin?: boolean;
 }
@@ -25,10 +25,10 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
     const {
         appId,
         anchorsClassName,
-        pagesUrl,
         targetsClassName,
         tagLimit = DEFAULT_TAG_LIMIT,
-        pageLimit = DEFAULT_PAGE_LIMIT,
+        relevantUrl,
+        relevantLimit = DEFAULT_RELEVANT_LIMIT,
         batchLimit = DEFAULT_REQUEST_BATCH_LIMIT,
         isAdmin,
     } = req;
@@ -82,7 +82,7 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
         }
 
         reqTargets.push({
-            element: target,
+            tagContainer: target,
             source: href,
             title: innerText,
         });
@@ -90,11 +90,10 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
         if (reqTargets.length === batchLimit || i === sources.length - 1) {
             tagify({
                 appId,
-                host,
                 targets: reqTargets,
-                pagesUrl,
                 tagLimit,
-                pageLimit,
+                relevantUrl,
+                relevantLimit,
                 isAdmin,
             });
             reqTargets = [];

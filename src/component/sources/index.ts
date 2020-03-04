@@ -1,43 +1,40 @@
-import { DEFAULT_TAG_LIMIT, DEFAULT_PAGE_LIMIT, isDev } from '../../config';
-import { domRender } from './render';
+import { DEFAULT_TAG_LIMIT, DEFAULT_RELEVANT_LIMIT, isDev } from '../../config';
 import tagCache from './cache';
 import tagifyClient, {
     TagifyBatchResponse,
     TagifyRequestItem,
     TagifyResponseItem,
 } from '../../client/TagifyClient';
+import { domRender } from '../render';
 
 const DEBUG_PREFIX = '[tagify]';
 
 export interface TagifyParams {
     appId: string;
-    host: string,
     targets: TagifyTarget[];
-    pagesUrl: string;
+    relevantUrl: string;
     tagLimit?: number;
-    pageLimit?: number;
+    relevantLimit?: number;
     isAdmin?: boolean;
 }
 
 export interface TagifyTarget {
-    element: Element;
+    tagContainer: Element;
     source: string;
     title: string;
-    query?: string;
 }
 
 interface RenderItemsParams {
     items: TagifyResponseItem[];
     targetMap: Map<string, Element>;
-    host: string;
     appId: string;
-    pagesUrl: string;
-    pageLimit: number;
+    relevantUrl: string;
+    relevantLimit: number;
     isAdmin?: boolean;
 }
 
 const renderResponseItems = (params: RenderItemsParams): void => {
-    const { items, targetMap, host, appId, pagesUrl, pageLimit, isAdmin } = params;
+    const { items, targetMap, appId, relevantUrl, relevantLimit, isAdmin } = params;
     items.forEach(page => {
         const { tags, source, title } = page;
 
@@ -45,10 +42,19 @@ const renderResponseItems = (params: RenderItemsParams): void => {
             return;
         }
 
-        const element = targetMap.get(source);
+        const tagContainer = targetMap.get(source);
 
-        if (element && tags.length > 0) {
-            domRender({ target: element, source, title, host, appId, tags, pagesUrl, pageLimit, isAdmin });
+        if (tagContainer && tags.length > 0) {
+            domRender({
+                target: tagContainer,
+                source,
+                title,
+                appId,
+                tags,
+                relevantUrl,
+                relevantLimit,
+                isAdmin
+            });
         }
     });
 }
@@ -57,11 +63,10 @@ const tagify = (params: TagifyParams): void => {
 
     const {
         appId,
-        host,
         targets,
-        pagesUrl,
         tagLimit = DEFAULT_TAG_LIMIT,
-        pageLimit = DEFAULT_PAGE_LIMIT,
+        relevantUrl,
+        relevantLimit = DEFAULT_RELEVANT_LIMIT,
         isAdmin,
     } = params;
 
@@ -81,7 +86,7 @@ const tagify = (params: TagifyParams): void => {
     const invalidateCache = !cachedLimit || cachedLimit < tagLimit;
 
     targets.forEach(t => {
-        targetMap.set(t.source, t.element);
+        targetMap.set(t.source, t.tagContainer);
 
         const cachedPage = tagCache.getPage(t.source);
         if (!invalidateCache && cachedPage) {
@@ -95,7 +100,7 @@ const tagify = (params: TagifyParams): void => {
     });
 
     if (cachedResult.length > 0) {
-        renderResponseItems({ items: cachedResult, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
+        renderResponseItems({ items: cachedResult, targetMap, appId, relevantUrl, relevantLimit, isAdmin });
     }
 
     if (reqs.length === 0) {        
@@ -104,7 +109,7 @@ const tagify = (params: TagifyParams): void => {
 
     const result: TagifyResponseItem[] = [];
 
-    tagifyClient.fetchPagesTags({ appId, host, limit: tagLimit, pages: reqs })
+    tagifyClient.fetchTagsForSources({ appId, limit: tagLimit, pages: reqs })
         .then((resp: TagifyBatchResponse) => {
             const { data: { pages } } = resp;
 
@@ -130,7 +135,14 @@ const tagify = (params: TagifyParams): void => {
                 tagCache.setPage(source, p);
             });
 
-            renderResponseItems({ items: result, targetMap, host, appId, pagesUrl, pageLimit, isAdmin });
+            renderResponseItems({ 
+                items: result, 
+                targetMap, 
+                appId, 
+                relevantUrl, 
+                relevantLimit, 
+                isAdmin 
+            });
 
             // Update limit cache
             tagCache.setLimit(tagLimit);

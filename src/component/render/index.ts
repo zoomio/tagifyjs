@@ -1,6 +1,6 @@
 import { isDev } from '../../config';
 import { TagItem } from '../../client/TagifyClient'
-import { appendToUl, createTag, createTagInput } from './util';
+import { appendToUl, createTag, createTagInput } from '../sources/util';
 import {
     ADD_BTN_STYLE,
     ADD_INPUT_STYLE_VISIBLE,
@@ -10,7 +10,7 @@ import {
     TAG_LIST_CLASS,
     TAG_LIST_STYLE,
     TAG_ROW_CLASS,
-} from './styles';
+} from '../sources/styles';
 
 const DEBUG_PREFIX = '[domRender]';
 
@@ -22,10 +22,9 @@ export interface RenderRequest {
     source: string;
     title: string;
     tags: TagItem[];
-    host: string;
     appId: string;
-    pagesUrl: string;
-    pageLimit: number;
+    relevantUrl: string;
+    relevantLimit: number;
     isAdmin?: boolean;
 }
 
@@ -36,7 +35,7 @@ export type Render = (request: RenderRequest) => void;
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { host, appId, source, title, target, tags, pagesUrl, pageLimit, isAdmin } = request;
+    const { appId, source, title, target, tags, relevantUrl, relevantLimit, isAdmin } = request;
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
@@ -90,12 +89,11 @@ export const domRender: Render = (request: RenderRequest) => {
         seenTags.set(value, true);
 
         const { anchor, button } = createTag({
-            host,
             appId,
             source,
             pageTitle: title,
-            pagesUrl,
-            pageLimit,
+            relevantUrl,
+            relevantLimit,
             lastScore,
             tagList: ulTags,
             seenTags,
@@ -116,12 +114,11 @@ export const domRender: Render = (request: RenderRequest) => {
     }
 
     const addInp = createTagInput({
-        host,
         appId,
         source,
         pageTitle: title,
-        pagesUrl,
-        pageLimit,
+        relevantUrl,
+        relevantLimit,
         lastScore,
         tagList: ulTags,
         seenTags,

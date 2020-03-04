@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.19.0
+ - introduced `#tagsForContent` which allows to tagify directly passed content instead of passing the URL;
+ - refactoring and changes in the API arguments.
+
 ## 0.18.1
  - fixed bug with the duplication of tags in case of the cached result and response from API both appended to the DOM.
 

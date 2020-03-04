@@ -21,9 +21,17 @@ export interface TagItemsResponse {
 
 export interface FetchTagsRequest {
     appId: string;
-    host: string;
     limit: number;
     pages: TagifyRequestItem[];
+}
+
+export interface FetchForContentReq {
+    appId: string;
+    content: string;
+    contentType: string;
+    source?: string;
+    title?: string;
+    limit?: number;
 }
 
 export interface TagifyResponseItem {
@@ -46,7 +54,6 @@ export interface TagifyRequestItem {
 
 export interface TagReq {
     appId: string;
-    host: string;
     value: string;
     source: string;
     pageTitle?: string;
@@ -66,19 +73,27 @@ class TagifyClient extends RestClient {
         super({ baseUrl, onUnauthorised });
     }
 
-    fetchPagesTags(request: FetchTagsRequest): Promise<TagifyBatchResponse> {
-        const { appId, host, limit, pages = [] } = request;
+    fetchTagsForSources(req: FetchTagsRequest): Promise<TagifyBatchResponse> {
+        const { appId, limit, pages = [] } = req;
         const path = `/batch/${appId}`;
-        return this.postResource(path, { host, limit, pages }, EXTRA_FETCH_OPTIONS);
+        return this.postResource(path, { limit, pages }, EXTRA_FETCH_OPTIONS);
+    }
+
+    fetchTagsForContent(req: FetchForContentReq): Promise<TagifyBatchResponse> {
+        const { appId, content, contentType, source, title, limit } = req;
+        const path = `/content/${appId}`;
+        return this.postResource(path, { content, contentType, source, title, limit }, EXTRA_FETCH_OPTIONS);
     }
 
     putTag(req: TagReq): void {
-        this.putResource('', req)
+        const { appId, source, value, pageTitle, score } = req;
+        this.putResource(`/${appId}`, { source, value, pageTitle, score })
             .catch(reason => console.error(reason));
     }
 
     deleteTag(req: TagReq): void {
-        this.deleteResource('', req)
+        const { appId, source, value, pageTitle, score } = req;
+        this.deleteResource(`/${appId}`, { source, value, pageTitle, score })
             .catch(reason => console.error(reason));
     }
 

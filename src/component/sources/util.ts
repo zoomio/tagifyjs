@@ -22,21 +22,20 @@ export interface TagResp {
 }
 
 export interface CustomTagReq {
-    host: string;
     appId: string;
     source: string;
     pageTitle: string;
-    pagesUrl: string;
-    pageLimit: number;
+    relevantUrl: string;
+    relevantLimit: number;
     lastScore: number;
     tagList: HTMLUListElement;
     seenTags: Map<string, boolean>;
 }
 
 export const createTag = (req: CustomTagReq, value: string): TagResp => {
-    const { host, appId, source, pagesUrl, pageLimit, pageTitle, lastScore } = req;
+    const { appId, source, relevantUrl, relevantLimit, pageTitle, lastScore } = req;
     let a: HTMLAnchorElement = document.createElement("a");
-    a.href = `${api()}/value/${appId}?value=${value}&limit=${pageLimit}&redirect=${pagesUrl}`;
+    a.href = `${api()}/value/${appId}?value=${value}&limit=${relevantLimit}&redirect=${relevantUrl}`;
     a.innerText = `#${value}`;
     a.className = TAG_LINK_CLASS;
     a.setAttribute('style', TAG_LINK_STYLE);
@@ -52,12 +51,6 @@ export const createTag = (req: CustomTagReq, value: string): TagResp => {
             }
             return;
         }
-        if (host === '') {
-            if (isDev()) {
-                console.log(`${DEBUG_PREFIX} host is required`);
-            }
-            return;
-        }
         if (value === '') {
             if (isDev()) {
                 console.log(`${DEBUG_PREFIX} value is required`);
@@ -70,7 +63,7 @@ export const createTag = (req: CustomTagReq, value: string): TagResp => {
             }
             return;
         }
-        deleteTag({ appId, host, value, source, pageTitle, score: lastScore });
+        deleteTag({ appId, value, source, pageTitle, score: lastScore });
         // remove self
         let parent: HTMLLIElement = <HTMLLIElement>a.parentElement;
         delBtn.remove();
@@ -126,7 +119,7 @@ export const createTagInput = (req: CustomTagReq): HTMLInputElement => {
 }
 
 const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
-    const { appId, host, source, pageTitle, lastScore, tagList, seenTags } = req;
+    const { appId, /* host,  */source, pageTitle, lastScore, tagList, seenTags } = req;
     const { value } = input;
 
     input.setAttribute("style", ADD_INPUT_STYLE_HIDDEN);
@@ -147,7 +140,7 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
         console.log(`${DEBUG_PREFIX} adding tag: ${JSON.stringify(req)}`);
     }
 
-    addTag({ appId, host, value: value, source, pageTitle, score: lastScore - 0.0001 });
+    addTag({ appId, value, source, pageTitle, score: lastScore - 0.0001 });
     const { anchor, button } = createTag(req, value);
     appendToUl(tagList, [anchor, button], TAG_ROW_CLASS);
     input.value = '';
