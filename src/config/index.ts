@@ -42,3 +42,19 @@ export const api = (): string | undefined => {
     }
     return cfg.api;
 }
+
+export const redirect = (hostname: string): void => {
+    window.location.assign(hostname);
+}
+
+export const locationHref = (): string => {
+    return window.location.href;
+}
+
+export const login = (appId: string): void => {
+    redirect(`${api()}/login?redirect=${encodeURIComponent(locationHref())}&tagify_app_id=${appId}`);
+}
+
+export function logout(appId: string) {
+    redirect(`${api()}/logout/${appId}?redirect=${encodeURIComponent(locationHref())}`);
+}

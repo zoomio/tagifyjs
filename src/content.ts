@@ -1,5 +1,5 @@
 import { DEFAULT_RELEVANT_LIMIT, DEFAULT_TAG_LIMIT, isDev } from './config';
-import { getHost, getUrl } from './util';
+import { getUrl } from './util';
 import { domRender } from './component/render';
 import tagifyClient, { TagifyBatchResponse } from './client/TagifyClient';
 
@@ -15,7 +15,6 @@ export interface TagifyContentReq {
     tagLimit?: number,
     relevantUrl: string,
     relevantLimit?: number,
-    isAdmin: boolean,
 }
 
 export const getTagsForContent = (req: TagifyContentReq): void => {
@@ -34,7 +33,6 @@ export const getTagsForContent = (req: TagifyContentReq): void => {
         tagLimit = DEFAULT_TAG_LIMIT,
         relevantUrl,
         relevantLimit = DEFAULT_RELEVANT_LIMIT,
-        isAdmin,
     } = req;
 
     if (content === '') {
@@ -75,7 +73,6 @@ export const getTagsForContent = (req: TagifyContentReq): void => {
             tags,
             relevantUrl,
             relevantLimit,
-            isAdmin,
         });
     });
 

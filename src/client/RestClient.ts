@@ -25,7 +25,7 @@ const defaultFetchOptions = {
 function parseResponse<T>(response: Response): Promise<T> {
   const statusCode = response.status;
   if (statusCode === 204 || statusCode === 202) {
-    return new Promise<T>(() => {});
+    return new Promise<T>(() => { });
   }
 
   return response.json();
@@ -45,11 +45,11 @@ class RestClient {
   constructor(params: RestClientParams = {}) {
     this.baseUrl = params.baseUrl || api() || '';
     this.defaultFetchOptions = params.defaultFetchOptions || defaultFetchOptions;
-    this.onUnauthorised = params.onUnauthorised || function () {};
+    this.onUnauthorised = params.onUnauthorised || function () { };
   }
 
   // D: DELETE data type
-  async deleteResource<D>(path: string, data?: D): Promise<Response> {
+  async deleteResource<D>(path: string, data?: D, additionalFetchOptions?: object): Promise<Response> {
     let fetchOptions;
     if (data) {
       fetchOptions = {
@@ -58,6 +58,12 @@ class RestClient {
           'content-type': 'application/json',
         },
       };
+    }
+    if (additionalFetchOptions) {
+      fetchOptions = {
+        ...fetchOptions,
+        ...additionalFetchOptions,
+      }
     }
     return await this.fetchResource(path, 'DELETE', fetchOptions);
   }
@@ -108,9 +114,14 @@ class RestClient {
         body: JSON.stringify(data),
         headers: {
           'content-type': 'application/json',
-        },
-        ...additionalFetchOptions,
+        }
       };
+    }
+    if (additionalFetchOptions) {
+      fetchOptions = {
+        ...fetchOptions,
+        ...additionalFetchOptions,
+      }
     }
     return await this.fetchResource(path, 'PUT', fetchOptions);
   }

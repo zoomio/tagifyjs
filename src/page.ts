@@ -10,7 +10,6 @@ export interface TagsForPageRequest {
     tagLimit?: number;
     relevantUrl: string;
     relevantLimit?: number;
-    isAdmin?: boolean;
 }
 
 const getTitle = (): string => {
@@ -43,7 +42,6 @@ export const getTagsForPage = (req: TagsForPageRequest): void => {
         tagLimit = DEFAULT_TAG_LIMIT,
         relevantUrl,
         relevantLimit = DEFAULT_RELEVANT_LIMIT,
-        isAdmin,
     } = req;
 
     const url: string = getUrl();
@@ -59,6 +57,5 @@ export const getTagsForPage = (req: TagsForPageRequest): void => {
         relevantUrl,
         tagLimit,
         relevantLimit,
-        isAdmin,
     });
 }

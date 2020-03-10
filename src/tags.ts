@@ -13,7 +13,6 @@ export interface TagsForAnchorsRequest {
     relevantUrl: string;
     relevantLimit?: number;
     batchLimit?: number;
-    isAdmin?: boolean;
 }
 
 export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
@@ -30,7 +29,6 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
         relevantUrl,
         relevantLimit = DEFAULT_RELEVANT_LIMIT,
         batchLimit = DEFAULT_REQUEST_BATCH_LIMIT,
-        isAdmin,
     } = req;
 
     const sources = (<HTMLAnchorElement[]><any>document.getElementsByClassName(anchorsClassName));
@@ -94,7 +92,6 @@ export const getTagsForAnchors = (req: TagsForAnchorsRequest) => {
                 tagLimit,
                 relevantUrl,
                 relevantLimit,
-                isAdmin,
             });
             reqTargets = [];
         }

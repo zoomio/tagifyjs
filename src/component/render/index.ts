@@ -1,6 +1,7 @@
+import { isAdmin } from '../../auth';
 import { isDev } from '../../config';
 import { TagItem } from '../../client/TagifyClient'
-import { appendToUl, createTag, createTagInput } from '../sources/util';
+import { appendToUl, createTag, createTagInput } from './util';
 import {
     ADD_BTN_STYLE,
     ADD_INPUT_STYLE_VISIBLE,
@@ -25,7 +26,6 @@ export interface RenderRequest {
     appId: string;
     relevantUrl: string;
     relevantLimit: number;
-    isAdmin?: boolean;
 }
 
 export type Render = (request: RenderRequest) => void;
@@ -35,13 +35,14 @@ export type Render = (request: RenderRequest) => void;
  */
 export const domRender: Render = (request: RenderRequest) => {
 
-    const { appId, source, title, target, tags, relevantUrl, relevantLimit, isAdmin } = request;
+    const { appId, source, title, target, tags, relevantUrl, relevantLimit } = request;
+    const isEditor: boolean = isAdmin();
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
     }
 
-    if (!isAdmin && isDev()) {
+    if (!isEditor && isDev()) {
         console.log(`${DEBUG_PREFIX} not allowed to edit tags`);
     }
 
@@ -98,7 +99,7 @@ export const domRender: Render = (request: RenderRequest) => {
             tagList: ulTags,
             seenTags,
         }, value);
-        if (isAdmin) {
+        if (isEditor) {
             appendToUl(ulTags, [anchor, button], TAG_ROW_CLASS);
         } else {
             appendToUl(ulTags, [anchor], TAG_ROW_CLASS);
@@ -109,7 +110,7 @@ export const domRender: Render = (request: RenderRequest) => {
 
     target.appendChild(ul);
 
-    if (!isAdmin) {
+    if (!isEditor) {
         return;
     }
 

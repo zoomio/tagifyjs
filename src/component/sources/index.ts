@@ -15,7 +15,6 @@ export interface TagifyParams {
     relevantUrl: string;
     tagLimit?: number;
     relevantLimit?: number;
-    isAdmin?: boolean;
 }
 
 export interface TagifyTarget {
@@ -30,11 +29,10 @@ interface RenderItemsParams {
     appId: string;
     relevantUrl: string;
     relevantLimit: number;
-    isAdmin?: boolean;
 }
 
 const renderResponseItems = (params: RenderItemsParams): void => {
-    const { items, targetMap, appId, relevantUrl, relevantLimit, isAdmin } = params;
+    const { items, targetMap, appId, relevantUrl, relevantLimit } = params;
     items.forEach(page => {
         const { tags, source, title } = page;
 
@@ -53,7 +51,6 @@ const renderResponseItems = (params: RenderItemsParams): void => {
                 tags,
                 relevantUrl,
                 relevantLimit,
-                isAdmin
             });
         }
     });
@@ -67,7 +64,6 @@ const tagify = (params: TagifyParams): void => {
         tagLimit = DEFAULT_TAG_LIMIT,
         relevantUrl,
         relevantLimit = DEFAULT_RELEVANT_LIMIT,
-        isAdmin,
     } = params;
 
     if (isDev()) {
@@ -100,10 +96,10 @@ const tagify = (params: TagifyParams): void => {
     });
 
     if (cachedResult.length > 0) {
-        renderResponseItems({ items: cachedResult, targetMap, appId, relevantUrl, relevantLimit, isAdmin });
+        renderResponseItems({ items: cachedResult, targetMap, appId, relevantUrl, relevantLimit });
     }
 
-    if (reqs.length === 0) {        
+    if (reqs.length === 0) {
         return;
     }
 
@@ -135,13 +131,12 @@ const tagify = (params: TagifyParams): void => {
                 tagCache.setPage(source, p);
             });
 
-            renderResponseItems({ 
-                items: result, 
-                targetMap, 
-                appId, 
-                relevantUrl, 
-                relevantLimit, 
-                isAdmin 
+            renderResponseItems({
+                items: result,
+                targetMap,
+                appId,
+                relevantUrl,
+                relevantLimit,
             });
 
             // Update limit cache

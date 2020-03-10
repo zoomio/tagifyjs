@@ -1,7 +1,8 @@
+import { getAppToken } from '../../auth';
 import { isDev } from '../../config';
 import tagifyClient, { TagReq } from '../../client/TagifyClient'
 import { api } from '../../config'
-import tagCache from './cache';
+import tagCache from '../sources/cache';
 import {
     ADD_INPUT_STYLE_HIDDEN,
     DEL_BTN_STYLE,
@@ -11,7 +12,7 @@ import {
     TAG_ROW_STYLE,
     TAG_LINK_CLASS,
     TAG_LINK_STYLE,
-} from './styles';
+} from '../sources/styles';
 
 
 const DEBUG_PREFIX = '[domRenderUtil]';
@@ -63,7 +64,7 @@ export const createTag = (req: CustomTagReq, value: string): TagResp => {
             }
             return;
         }
-        deleteTag({ appId, value, source, pageTitle, score: lastScore });
+        deleteTag({ appId, appToken: getAppToken() || '', value, source, pageTitle, score: lastScore });
         // remove self
         let parent: HTMLLIElement = <HTMLLIElement>a.parentElement;
         delBtn.remove();
@@ -119,7 +120,7 @@ export const createTagInput = (req: CustomTagReq): HTMLInputElement => {
 }
 
 const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
-    const { appId, /* host,  */source, pageTitle, lastScore, tagList, seenTags } = req;
+    const { appId, source, pageTitle, lastScore, tagList, seenTags } = req;
     const { value } = input;
 
     input.setAttribute("style", ADD_INPUT_STYLE_HIDDEN);
@@ -140,7 +141,7 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
         console.log(`${DEBUG_PREFIX} adding tag: ${JSON.stringify(req)}`);
     }
 
-    addTag({ appId, value, source, pageTitle, score: lastScore - 0.0001 });
+    addTag({ appId, appToken: getAppToken() || '', value, source, pageTitle, score: lastScore - 0.0001 });
     const { anchor, button } = createTag(req, value);
     appendToUl(tagList, [anchor, button], TAG_ROW_CLASS);
     input.value = '';

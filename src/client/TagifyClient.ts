@@ -54,6 +54,7 @@ export interface TagifyRequestItem {
 
 export interface TagReq {
     appId: string;
+    appToken: string;
     value: string;
     source: string;
     pageTitle?: string;
@@ -62,6 +63,19 @@ export interface TagReq {
 
 export interface TagifySatus {
     version: string;
+}
+
+export interface UserReq {
+    appId: string;
+}
+
+export interface UserProfile {
+    id: string;
+    displayName: string;
+    imageURL: string;
+    email: string;
+    role: string;
+    isAdmin: boolean;
 }
 
 // helps to bypass cross origin limits
@@ -86,19 +100,39 @@ class TagifyClient extends RestClient {
     }
 
     putTag(req: TagReq): void {
-        const { appId, source, value, pageTitle, score } = req;
-        this.putResource(`/${appId}`, { source, value, pageTitle, score })
+        const { appId, appToken, source, value, pageTitle, score } = req;
+        this.putResource(
+            `/${appId}`,
+            { source, value, pageTitle, score },
+            {
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': 'Bearer ' + appToken,
+                }
+            })
             .catch(reason => console.error(reason));
     }
 
     deleteTag(req: TagReq): void {
-        const { appId, source, value, pageTitle, score } = req;
-        this.deleteResource(`/${appId}`, { source, value, pageTitle, score })
+        const { appId, appToken, source, value, pageTitle, score } = req;
+        this.deleteResource(
+            `/${appId}`,
+            { source, value, pageTitle, score },
+            {
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': 'Bearer ' + appToken,
+                }
+            })
             .catch(reason => console.error(reason));
     }
 
     status(): Promise<TagifySatus> {
         return this.getResource('/status', EXTRA_FETCH_OPTIONS);
+    }
+
+    getUser(req: UserReq): Promise<UserProfile> {
+        return this.getResource(`/user/${req.appId}`, EXTRA_FETCH_OPTIONS);
     }
 
 }
