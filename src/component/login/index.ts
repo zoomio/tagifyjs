@@ -24,11 +24,6 @@ export const appendLogin = (params: LoginParams): void => {
 
     // Unauthenticated
     if (!appToken || appToken === '') {
-        // let loginBtn: HTMLButtonElement = document.createElement("button");
-        // loginBtn.className = 'btn btn-dark btn-outline-light btn-sm'; // todo
-        // loginBtn.onclick = () => login(appId);
-        // loginBtn.innerText = 'Log in';
-        // <a class="btn btn-outline-light btn-sm dark-text" href="{{ .LoginURL }}" role="button">Log in</a>
         let loginBtn: HTMLAnchorElement = document.createElement("a");
         loginBtn.className = 'btn btn-dark btn-outline-light btn-sm'; // todo
         loginBtn.href = `${api()}/login?redirect=${encodeURIComponent(locationHref())}&tagify_app_id=${appId}`;
