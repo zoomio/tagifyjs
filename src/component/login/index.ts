@@ -1,5 +1,5 @@
-import { api, isDev, locationHref, logout } from '../../config';
-import { UserProfile } from '../../client/TagifyClient';
+import { unAuth } from '../../auth';
+import { api, isDev, locationHref, redirect } from '../../config';
 
 const LOG_PREFIX = '[appendLogin]';
 
@@ -42,7 +42,9 @@ export const appendLogin = (params: LoginParams): void => {
     let authed: HTMLElement = document.createElement("span");
     let logoutBtn: HTMLButtonElement = document.createElement("button");
     logoutBtn.className = 'btn btn-dark btn-default btn-sm'; // todo
-    logoutBtn.onclick = () => logout(appId);
+    logoutBtn.onclick = (): void => {
+        redirect(unAuth());
+    };
     logoutBtn.innerText = 'Log out';
     authed.appendChild(logoutBtn);
     parent.appendChild(authed);

@@ -1,4 +1,4 @@
-import { getAppToken } from '../../auth';
+import { auth } from '../../auth';
 import { isDev } from '../../config';
 import tagifyClient, { TagReq } from '../../client/TagifyClient'
 import { api } from '../../config'
@@ -34,6 +34,7 @@ export interface CustomTagReq {
 }
 
 export const createTag = (req: CustomTagReq, value: string): TagResp => {
+    const appToken = auth() || '';
     const { appId, source, relevantUrl, relevantLimit, pageTitle, lastScore } = req;
     let a: HTMLAnchorElement = document.createElement("a");
     a.href = `${api()}/value/${appId}?value=${value}&limit=${relevantLimit}&redirect=${relevantUrl}`;
@@ -64,7 +65,7 @@ export const createTag = (req: CustomTagReq, value: string): TagResp => {
             }
             return;
         }
-        deleteTag({ appId, appToken: getAppToken() || '', value, source, pageTitle, score: lastScore });
+        deleteTag({ appId, appToken, value, source, pageTitle, score: lastScore });
         // remove self
         let parent: HTMLLIElement = <HTMLLIElement>a.parentElement;
         delBtn.remove();
@@ -120,6 +121,7 @@ export const createTagInput = (req: CustomTagReq): HTMLInputElement => {
 }
 
 const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
+    const appToken = auth() || '';
     const { appId, source, pageTitle, lastScore, tagList, seenTags } = req;
     const { value } = input;
 
@@ -137,17 +139,16 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
         }
         return;
     }
-    if (isDev()) {
-        console.log(`${DEBUG_PREFIX} adding tag: ${JSON.stringify(req)}`);
-    }
-
-    addTag({ appId, appToken: getAppToken() || '', value, source, pageTitle, score: lastScore - 0.0001 });
+    addTag({ appId, appToken, value, source, pageTitle, score: lastScore - 0.0001 });
     const { anchor, button } = createTag(req, value);
     appendToUl(tagList, [anchor, button], TAG_ROW_CLASS);
     input.value = '';
 }
 
 const addTag = (req: TagReq): void => {
+    if (isDev()) {
+        console.log(`${DEBUG_PREFIX} adding tag: ${JSON.stringify(req)}`);
+    }
     tagifyClient.putTag(req);
     tagCache.removePage(req.source);
 }

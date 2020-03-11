@@ -48,8 +48,9 @@ class RestClient {
     this.onUnauthorised = params.onUnauthorised || function () { };
   }
 
+  // T: return type
   // D: DELETE data type
-  async deleteResource<D>(path: string, data?: D, additionalFetchOptions?: object): Promise<Response> {
+  async deleteResource<T, D>(path: string, data?: D, additionalFetchOptions?: object): Promise<T> {
     let fetchOptions;
     if (data) {
       fetchOptions = {
@@ -65,7 +66,7 @@ class RestClient {
         ...additionalFetchOptions,
       }
     }
-    return await this.fetchResource(path, 'DELETE', fetchOptions);
+    return await this.fetchJson<T>(path, 'DELETE', fetchOptions);
   }
 
   async getResource<T>(path: string, additionalFetchOptions: object = {}): Promise<T> {
@@ -73,7 +74,7 @@ class RestClient {
   }
 
   // T: return type
-  // D: post data type
+  // D: POST data type
   async postResource<T, D>(path: string, data: D, additionalFetchOptions?: object): Promise<T> {
     let fetchOptions = {
       body: JSON.stringify(data),
@@ -92,7 +93,7 @@ class RestClient {
     return await this.fetchJson<T>(path, 'POST', fetchOptions);
   }
 
-  // D: post data type
+  // D: POST data type
   async postResourceIgnoreResponse<D>(path: string, data?: D): Promise<void> {
     let fetchOptions;
     if (data) {
@@ -106,8 +107,9 @@ class RestClient {
     await this.fetchResource(path, 'POST', fetchOptions);
   }
 
+  // T: return type
   // D: PUT data type
-  async putResource<D>(path: string, data?: D, additionalFetchOptions: object = {}): Promise<Response> {
+  async putResource<T, D>(path: string, data?: D, additionalFetchOptions: object = {}): Promise<T> {
     let fetchOptions;
     if (data) {
       fetchOptions = {
@@ -123,7 +125,7 @@ class RestClient {
         ...additionalFetchOptions,
       }
     }
-    return await this.fetchResource(path, 'PUT', fetchOptions);
+    return await this.fetchJson<T>(path, 'PUT', fetchOptions);
   }
 
   protected async fetchResource(path: string, method: string, additionalFetchOptions: object = {}): Promise<Response> {

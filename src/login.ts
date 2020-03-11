@@ -1,4 +1,4 @@
-import { getAppToken } from './auth';
+import { auth } from './auth';
 import { appendLogin } from './component/login';
 import { isDev } from './config';
 
@@ -10,6 +10,7 @@ export interface LoginParams {
 }
 
 export const renderLogin = (params: LoginParams): void => {
+    const appToken = auth();
     const { appId, targetId } = params;
     if (isDev()) {
         console.log(`${LOG_PREFIX} params: ${JSON.stringify(params)}`);
@@ -19,5 +20,5 @@ export const renderLogin = (params: LoginParams): void => {
         console.error(`${LOG_PREFIX} HTML element not found by ID: ${targetId}`);
         return;
     }
-    appendLogin({ appId, appToken: getAppToken(), container });
+    appendLogin({ appId, appToken, container });
 }

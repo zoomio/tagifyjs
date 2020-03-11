@@ -3,5 +3,9 @@ export const getHost = (): string => {
 }
 
 export const getUrl = (): string => {
-    return window.location.href;
+    const src = window.location.href;
+    if (src.endsWith('/')) {
+        return src.substr(0, src.length - 1);
+    }
+    return src;
 }

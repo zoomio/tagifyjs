@@ -99,32 +99,38 @@ class TagifyClient extends RestClient {
         return this.postResource(path, { content, contentType, source, title, limit }, EXTRA_FETCH_OPTIONS);
     }
 
-    putTag(req: TagReq): void {
+    async putTag(req: TagReq): Promise<boolean> {
         const { appId, appToken, source, value, pageTitle, score } = req;
-        this.putResource(
-            `/${appId}`,
-            { source, value, pageTitle, score },
-            {
+        try {
+            const resp = await this.putResource(`/${appId}`, { source, value, pageTitle, score }, {
+                credentials: 'omit',
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': 'Bearer ' + appToken,
                 }
-            })
-            .catch(reason => console.error(reason));
+            });
+            return true;
+        } catch (reason) {
+            console.log(reason);
+            return false;
+        }
     }
 
-    deleteTag(req: TagReq): void {
+    async deleteTag(req: TagReq): Promise<boolean> {
         const { appId, appToken, source, value, pageTitle, score } = req;
-        this.deleteResource(
-            `/${appId}`,
-            { source, value, pageTitle, score },
-            {
+        try {
+            const resp = await this.deleteResource(`/${appId}`, { source, value, pageTitle, score }, {
+                credentials: 'omit',
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': 'Bearer ' + appToken,
                 }
-            })
-            .catch(reason => console.error(reason));
+            });
+            return true;
+        } catch (reason) {
+            console.log(reason);
+            return false;
+        }
     }
 
     status(): Promise<TagifySatus> {
