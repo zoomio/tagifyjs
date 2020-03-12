@@ -83,6 +83,9 @@ export const createTag = (req: CustomTagReq, value: string): TagResp => {
 
 export const appendToUl = (ul: HTMLUListElement, children: HTMLElement[], liClassName: string): void => {
     if (!children || children.length === 0) {
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} nothing to append, children is not provided...`);
+        }
         return;
     }
 
@@ -96,6 +99,9 @@ export const appendToUl = (ul: HTMLUListElement, children: HTMLElement[], liClas
 
     children.forEach(child => {
         li.appendChild(child);
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} appended "${child.innerText}"`);
+        }
     });
 
     ul.appendChild(li);

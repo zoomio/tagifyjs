@@ -99,6 +99,11 @@ export const domRender: Render = (request: RenderRequest) => {
             tagList: ulTags,
             seenTags,
         }, value);
+
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} appending tag ${value}`);
+        }
+
         if (isEditor) {
             appendToUl(ulTags, [anchor, button], TAG_ROW_CLASS);
         } else {

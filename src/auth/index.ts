@@ -28,7 +28,7 @@ export const unAuth = (): string => {
 
 const clearAuthParams = (urlParams: URLSearchParams): string => {
     let q = '';
-    urlParams.forEach((v, k, p) => {
+    urlParams.forEach((v, k) => {
         if (k === APP_TOKEN_KEY || k === APP_ID_KEY) {
             return;
         }
