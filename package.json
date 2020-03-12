@@ -1,6 +1,6 @@
 {
   "name": "@zoomio/tagifyjs",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "JS component for Tagify.",
   "module": "src/index.js",
   "main": "dist/tagify.js",

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.20.0
+ - introduced JWT-based authentication flow via Google;
+ - added ability to authenticate via the "Log in" button (`#showLogin`) in order to get access to the inline editing feature;
+ - lots of refactorings, removed `isAdmin` parameter from all API methods;
+ - bumped default tags cache TTL to 30 days.
+
 ## 0.19.0
  - introduced `#tagsForContent` which allows to tagify directly passed content instead of passing the URL;
  - refactoring and changes in the API arguments.
