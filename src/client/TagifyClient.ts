@@ -8,17 +8,6 @@ export interface TagItem {
     score?: number;
 }
 
-interface Page {
-    source: string;
-    tags: TagItem[];
-}
-
-export interface TagItemsResponse {
-    data: {
-        pages: Page[];
-    }
-}
-
 export interface FetchTagsRequest {
     appId: string;
     limit: number;
@@ -102,7 +91,7 @@ class TagifyClient extends RestClient {
     async putTag(req: TagReq): Promise<boolean> {
         const { appId, appToken, source, value, pageTitle, score } = req;
         try {
-            const resp = await this.putResource(`/${appId}`, { source, value, pageTitle, score }, {
+            await this.putResource(`/${appId}`, { source, value, pageTitle, score }, {
                 credentials: 'omit',
                 headers: {
                     'content-type': 'application/json',
@@ -119,7 +108,7 @@ class TagifyClient extends RestClient {
     async deleteTag(req: TagReq): Promise<boolean> {
         const { appId, appToken, source, value, pageTitle, score } = req;
         try {
-            const resp = await this.deleteResource(`/${appId}`, { source, value, pageTitle, score }, {
+            await this.deleteResource(`/${appId}`, { source, value, pageTitle, score }, {
                 credentials: 'omit',
                 headers: {
                     'content-type': 'application/json',
@@ -135,10 +124,6 @@ class TagifyClient extends RestClient {
 
     status(): Promise<TagifySatus> {
         return this.getResource('/status', EXTRA_FETCH_OPTIONS);
-    }
-
-    getUser(req: UserReq): Promise<UserProfile> {
-        return this.getResource(`/user/${req.appId}`, EXTRA_FETCH_OPTIONS);
     }
 
 }
