@@ -2,12 +2,14 @@ import { TagifyResponseItem } from '../../client/TagifyClient';
 
 const LIMIT_KEY: string = 'tagify-limit';
 const API_VERSION_KEY: string = 'tagify-api-version';
-const DEFAULT_CACHE_TTL: number = 1000 * 60 * 60 * 24 * 2; // 2 days
+const DEFAULT_CACHE_TTL: number = 1000 * 60 * 60 * 24 * 30; // 30 days
+const DEFAULT_ASYNC_CACHE_TTL: number = 1000 * 60 * 15; // 15 minutes
 
 export type CachedValue = TagLimit | ApiVersion | TagifyResponseItem;
 
 export interface CacheItem {
     expiry?: number;
+    invalidateExp?: number;
     value: CachedValue;
 }
 
@@ -17,6 +19,11 @@ interface TagLimit {
 
 interface ApiVersion {
     version: string;
+}
+
+export interface TagifyPage {
+    invalidateExp?: number;
+    value?: TagifyResponseItem;
 }
 
 class TagCache {
@@ -34,8 +41,11 @@ class TagCache {
 
     private setWithExpiry(key: string, value: CachedValue): void {
         const now = new Date().getTime();
-        const ttl = this.cacheTtl;
-        const cachedValue: CacheItem = { expiry: now + ttl, value };
+        const cachedValue: CacheItem = {
+            expiry: now + this.cacheTtl,
+            invalidateExp: now + DEFAULT_ASYNC_CACHE_TTL,
+            value
+        };
         localStorage.setItem(btoa(key), JSON.stringify(cachedValue));
     }
 
@@ -45,7 +55,7 @@ class TagCache {
             return null;
         }
 
-        try {            
+        try {
             return JSON.parse(cached);
         } catch (error) {
             // ignored
@@ -58,7 +68,7 @@ class TagCache {
         if (!value) {
             return null;
         }
-        
+
         const now = new Date().getTime();
         if (value.expiry && value.expiry < now) {
             return null;
@@ -95,12 +105,15 @@ class TagCache {
         this.setWithExpiry(key, page);
     }
 
-    getPage(key: string): TagifyResponseItem | null {
+    getPage(key: string): TagifyPage | null {
         const cached = this.getWithExpiry(key);
         if (!cached) {
             return null;
         }
-        return <TagifyResponseItem>cached.value;
+        return {
+            invalidateExp: cached.invalidateExp,
+            value: <TagifyResponseItem>cached.value
+        };
     }
 
     removePage(key: string): void {

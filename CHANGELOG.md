@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.22.0
+ - perform async cache invalidation every 15 minutes.
+
 ## 0.21.0
  - added `#isAuthorized` for convenience of checking whether client is authenticated or not.
 

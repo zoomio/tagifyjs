@@ -1,5 +1,5 @@
 import { DEFAULT_TAG_LIMIT, DEFAULT_RELEVANT_LIMIT, isDev } from '../../config';
-import tagCache from './cache';
+import tagCache, { TagifyPage } from './cache';
 import tagifyClient, {
     TagifyBatchResponse,
     TagifyRequestItem,
@@ -75,25 +75,67 @@ const tagify = (params: TagifyParams): void => {
     }
 
     const targetMap: Map<string, Element> = new Map();
-    const reqs: TagifyRequestItem[] = [];
-    const cachedResult: TagifyResponseItem[] = [];
+    const reqs: TagifyRequestItem[] = []; // for pages not found in cache
+    const cachedResult: TagifyResponseItem[] = []; // for results from cache
+    const invalidateReqs: TagifyRequestItem[] = []; // async cache invalidation
+    const now: number = new Date().getTime(); // now in millis
 
-    let cachedLimit = tagCache.getLimit();
+    const cachedLimit = tagCache.getLimit();
     const invalidateCache = !cachedLimit || cachedLimit < tagLimit;
 
     targets.forEach(t => {
         targetMap.set(t.source, t.tagContainer);
 
-        const cachedPage = tagCache.getPage(t.source);
-        if (!invalidateCache && cachedPage) {
-            cachedResult.push(cachedPage);
+        const cachedPage: TagifyPage | null = tagCache.getPage(t.source);
+        if (!invalidateCache && cachedPage && cachedPage.value) {
+            cachedResult.push(cachedPage.value);
             if (isDev()) {
-                console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}"`);
+                console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}", invalidate: ${cachedPage.invalidateExp}`);
+            }
+            if (cachedPage.invalidateExp && cachedPage.invalidateExp < now) {
+                invalidateReqs.push({ source: t.source, title: t.title, limit: tagLimit });
             }
         } else {
             reqs.push({ source: t.source, title: t.title, limit: tagLimit });
         }
     });
+
+    if (invalidateReqs.length > 0) {
+        if (isDev()) {
+            console.log(`${DEBUG_PREFIX} number of invalidation requests is ${invalidateReqs.length}`);
+        }
+        tagifyClient.fetchTagsForSources({ appId, limit: tagLimit, pages: invalidateReqs })
+            .then((resp: TagifyBatchResponse) => {
+                const { data: { pages } } = resp;
+    
+                if (isDev()) {
+                    console.log(`${DEBUG_PREFIX} invalidation fetched ${!pages ? 0 : pages.length} pages`);
+                }
+    
+                if (!pages || pages.length === 0) {
+                    return;
+                }
+    
+                pages.forEach(p => {
+                    const { tags, source, timestamp } = p;
+    
+                    if (!tags || tags.length === 0) {
+                        return;
+                    }
+    
+                    const cached: TagifyPage | null = tagCache.getPage(source);
+                    if (!cached || (timestamp && cached.value && cached.value.timestamp && cached.value.timestamp < timestamp)) {
+                        tagCache.setPage(source, p);
+                        if (isDev()) {
+                            console.log(`${DEBUG_PREFIX} invalidated ${source}`);
+                        }
+                    } else if (isDev()) {
+                        console.log(`${DEBUG_PREFIX} not invalidated ${source}`);
+                    }
+    
+                });
+            });
+    }
 
     if (cachedResult.length > 0) {
         renderResponseItems({ items: cachedResult, targetMap, appId, relevantUrl, relevantLimit });

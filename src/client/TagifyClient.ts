@@ -26,6 +26,7 @@ export interface FetchForContentReq {
 export interface TagifyResponseItem {
     source: string;
     title: string;
+    timestamp?: string;
     tags: TagItem[];
 }
 

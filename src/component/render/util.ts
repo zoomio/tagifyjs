@@ -99,9 +99,6 @@ export const appendToUl = (ul: HTMLUListElement, children: HTMLElement[], liClas
 
     children.forEach(child => {
         li.appendChild(child);
-        if (isDev()) {
-            console.log(`${DEBUG_PREFIX} appended "${child.innerText}"`);
-        }
     });
 
     ul.appendChild(li);
@@ -153,7 +150,7 @@ const appendTag = (req: CustomTagReq, input: HTMLInputElement): void => {
 
 const addTag = (req: TagReq): void => {
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX} adding tag: ${JSON.stringify(req)}`);
+        console.log(`${DEBUG_PREFIX} putTag: ${JSON.stringify(req)}`);
     }
     tagifyClient.putTag(req);
     tagCache.removePage(req.source);
@@ -161,7 +158,7 @@ const addTag = (req: TagReq): void => {
 
 const deleteTag = (req: TagReq): void => {
     if (isDev()) {
-        console.log(`${DEBUG_PREFIX} removing tag: ${JSON.stringify(req)}`);
+        console.log(`${DEBUG_PREFIX} deleteTag: ${JSON.stringify(req)}`);
     }
     tagifyClient.deleteTag(req);
     tagCache.removePage(req.source);
