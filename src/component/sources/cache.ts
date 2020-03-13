@@ -21,7 +21,11 @@ interface ApiVersion {
 
 class TagCache {
 
-    private cacheTtl?: number;
+    private cacheTtl: number;
+
+    constructor(cacheTtl?: number) {
+        this.cacheTtl = cacheTtl || DEFAULT_CACHE_TTL;
+    }
 
     private set(key: string, value: CachedValue): void {
         const cachedValue: CacheItem = { value };
@@ -30,7 +34,7 @@ class TagCache {
 
     private setWithExpiry(key: string, value: CachedValue): void {
         const now = new Date().getTime();
-        const ttl = this.cacheTtl || DEFAULT_CACHE_TTL;
+        const ttl = this.cacheTtl;
         const cachedValue: CacheItem = { expiry: now + ttl, value };
         localStorage.setItem(btoa(key), JSON.stringify(cachedValue));
     }
