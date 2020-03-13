@@ -12,7 +12,7 @@ import {
     TAG_ROW_STYLE,
     TAG_LINK_CLASS,
     TAG_LINK_STYLE,
-} from '../sources/styles';
+} from './styles';
 
 
 const DEBUG_PREFIX = '[domRenderUtil]';

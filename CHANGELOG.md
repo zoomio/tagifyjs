@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.21.0
+ - added `#isAuthorized` for convenience of checking whether client is authenticated or not.
+
 ## 0.20.0
  - introduced JWT-based authentication flow via Google;
  - added ability to authenticate via the "Log in" button (`#showLogin`) in order to get access to the inline editing feature;

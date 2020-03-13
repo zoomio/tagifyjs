@@ -7,6 +7,7 @@ font-weight: 400;
 color: #fff;
 background-color: #343a40;
 border-color: #343a40;
+border-width: 0px;
 text-align: center;
 vertical-align: middle;
 cursor: pointer;

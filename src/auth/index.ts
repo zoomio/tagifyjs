@@ -15,7 +15,7 @@ export const auth = (): string | undefined => {
     return getCookie(APP_TOKEN_KEY);
 }
 
-export const isAdmin = (): boolean => {
+export const isAuthed = (): boolean => {
     const t = auth();
     return t !== undefined && t !== '';
 }

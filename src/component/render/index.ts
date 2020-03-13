@@ -1,4 +1,4 @@
-import { isAdmin } from '../../auth';
+import { isAuthed } from '../../auth';
 import { isDev } from '../../config';
 import { TagItem } from '../../client/TagifyClient'
 import { appendToUl, createTag, createTagInput } from './util';
@@ -11,7 +11,7 @@ import {
     TAG_LIST_CLASS,
     TAG_LIST_STYLE,
     TAG_ROW_CLASS,
-} from '../sources/styles';
+} from './styles';
 
 const DEBUG_PREFIX = '[domRender]';
 
@@ -36,7 +36,7 @@ export type Render = (request: RenderRequest) => void;
 export const domRender: Render = (request: RenderRequest) => {
 
     const { appId, source, title, target, tags, relevantUrl, relevantLimit } = request;
-    const isEditor: boolean = isAdmin();
+    const isEditor: boolean = isAuthed();
 
     if (isDev()) {
         console.log(`${DEBUG_PREFIX} tags: ${JSON.stringify(tags)}`);
