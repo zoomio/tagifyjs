@@ -92,7 +92,7 @@ const tagify = (params: TagifyParams): void => {
             if (isDev()) {
                 console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}", invalidate: ${cachedPage.invalidateExp}`);
             }
-            if (cachedPage.invalidateExp && cachedPage.invalidateExp < now) {
+            if (!cachedPage.invalidateExp || cachedPage.invalidateExp < now) {
                 invalidateReqs.push({ source: t.source, title: t.title, limit: tagLimit });
             }
         } else {
