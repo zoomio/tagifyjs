@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.22.1
+ - fix for async cache invalidation.
+
 ## 0.22.0
  - perform async cache invalidation every 15 minutes.
 

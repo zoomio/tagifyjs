@@ -76,7 +76,8 @@ const tagify = (params: TagifyParams): void => {
 
     const targetMap: Map<string, Element> = new Map();
     const reqs: TagifyRequestItem[] = []; // for pages not found in cache
-    const cachedResult: TagifyResponseItem[] = []; // for results from cache
+    const cachedResult: TagifyResponseItem[] = []; // list of results from cache
+    const cachedTS: Map<string, string> = new Map(); // map of cached timestamps
     const invalidateReqs: TagifyRequestItem[] = []; // async cache invalidation
     const now: number = new Date().getTime(); // now in millis
 
@@ -89,10 +90,14 @@ const tagify = (params: TagifyParams): void => {
         const cachedPage: TagifyPage | null = tagCache.getPage(t.source);
         if (!invalidateCache && cachedPage && cachedPage.value) {
             cachedResult.push(cachedPage.value);
+            cachedTS.set(cachedPage.value.source, cachedPage.value.timestamp || '');
             if (isDev()) {
                 console.log(`${DEBUG_PREFIX} found page in cache for "${t.source}", invalidate: ${cachedPage.invalidateExp}`);
             }
             if (!cachedPage.invalidateExp || cachedPage.invalidateExp < now) {
+                if (isDev()) {
+                    console.log(`${DEBUG_PREFIX} time to invalidate cache asynchronously`);
+                }
                 invalidateReqs.push({ source: t.source, title: t.title, limit: tagLimit });
             }
         } else {
@@ -122,9 +127,9 @@ const tagify = (params: TagifyParams): void => {
                     if (!tags || tags.length === 0) {
                         return;
                     }
-    
-                    const cached: TagifyPage | null = tagCache.getPage(source);
-                    if (!cached || (timestamp && cached.value && cached.value.timestamp && cached.value.timestamp < timestamp)) {
+                        
+                    const pageTS: string | undefined = cachedTS.get(source);
+                    if (!pageTS || pageTS === '' || (timestamp && pageTS < timestamp)) {
                         tagCache.setPage(source, p);
                         if (isDev()) {
                             console.log(`${DEBUG_PREFIX} invalidated ${source}`);
