@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.23.0
+ - 90 days default cache TTL;
+ - made query vars more generic.
+
 ## 0.22.1
  - fix for async cache invalidation.
 

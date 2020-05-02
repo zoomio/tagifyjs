@@ -1,18 +1,17 @@
 import { redirect } from '../config';
 
-const APP_ID_KEY: string = 'tagify_app_id';
-const APP_TOKEN_KEY: string = 'tagify_app_token';
+const APP_TOKEN: string = 'token';
+const APP_TOKEN_COOKIE: string = 'tagify_token';
 const COOKIE_TTL: number = 1000 * 60 * 60 * 24 * 2; // 2 days
 
 export const auth = (): string | undefined => {
     const urlParams = new URLSearchParams(window.location.search);
-    const appToken = urlParams.get(APP_TOKEN_KEY);
+    const appToken = urlParams.get(APP_TOKEN);
     if (appToken && appToken.length > 0) {
-        setCookie(APP_TOKEN_KEY, appToken, COOKIE_TTL);
-        setCookie(APP_ID_KEY, urlParams.get(APP_ID_KEY) || '', COOKIE_TTL);
+        setCookie(APP_TOKEN_COOKIE, appToken, COOKIE_TTL);
         redirect(window.location.pathname + clearAuthParams(urlParams));
     }
-    return getCookie(APP_TOKEN_KEY);
+    return getCookie(APP_TOKEN_COOKIE);
 }
 
 export const isAuthed = (): boolean => {
@@ -21,15 +20,14 @@ export const isAuthed = (): boolean => {
 }
 
 export const unAuth = (): string => {
-    setCookie(APP_TOKEN_KEY, '', 1);
-    setCookie(APP_ID_KEY, '', 1);
+    setCookie(APP_TOKEN_COOKIE, '', 1);
     return clearAuthParams(new URLSearchParams(window.location.search));
 }
 
 const clearAuthParams = (urlParams: URLSearchParams): string => {
     let q = '';
-    urlParams.forEach((v, k) => {
-        if (k === APP_TOKEN_KEY || k === APP_ID_KEY) {
+    urlParams.forEach((value, key) => {
+        if (key === APP_TOKEN) {
             return;
         }
         if (q.length === 0) {
@@ -37,7 +35,7 @@ const clearAuthParams = (urlParams: URLSearchParams): string => {
         } else {
             q = '&';
         }
-        q += `${v}=${k}`;
+        q += `${key}=${value}`;
     });
     return q
 }

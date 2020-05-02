@@ -41,7 +41,7 @@ export const appendLogin = (params: LoginParams): void => {
     if (!appToken || appToken === '') {
         let loginBtn: HTMLAnchorElement = document.createElement("a");
         loginBtn.className = LOGIN_BTN_CLASS;
-        loginBtn.href = `${api()}/login?redirect=${encodeURIComponent(locationHref())}&tagify_app_id=${appId}`;
+        loginBtn.href = `${api()}/login?redirect=${encodeURIComponent(locationHref())}&app_id=${appId}`;
         loginBtn.innerText = loginText;
         loginBtn.setAttribute('role', 'button');
         loginBtn.setAttribute('style', LOGIN_BTN_STYLE);
